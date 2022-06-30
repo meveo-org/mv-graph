@@ -11,12 +11,12 @@ const forceProperties = {
     charge: {
         enabled: true,
         strength: -50,
-        distanceMin: 1,
+        distanceMin: 20,
         distanceMax: 200
     },
     collide: {
         enabled: true,
-        strength: .2,
+        strength: 1,
         iterations: 1,
         radius: 10
     },
@@ -32,7 +32,7 @@ const forceProperties = {
     },
     link: {
         enabled: true,
-        distance: 10,
+        distance: 50,
         iterations: 1
     }
 };
@@ -41,6 +41,7 @@ const forceProperties = {
  * Graph class generator
  */
 export default class D3Graph {
+
     constructor(svg, data) {
         this.data = data;
 
@@ -112,8 +113,8 @@ export default class D3Graph {
                 .attr("y2", function (d) { return d.target.y; });
 
             this.node
-                .attr("cx", function (d) { return d.x; })
-                .attr("cy", function (d) { return d.y; });
+                .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(1500 - forceProperties.collide.radius, d.x)); })
+                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(900 - forceProperties.collide.radius, d.y)); });
             d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha() * 100) + '%');
         }
     }

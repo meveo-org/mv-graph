@@ -45,7 +45,7 @@ export class MvGraph extends LitElement {
 
   render() {
     return html`
-      <svg width="800px" height="800px"></svg>
+      <svg width="1500px" height="900px"></svg>
     `;
   }
 
