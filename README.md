@@ -1,4 +1,4 @@
-# \<mv-graph>
+# mv-graph
 
 This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
@@ -32,4 +32,21 @@ If you customize the configuration a lot, you can consider moving them to indivi
 npm start
 ```
 
-To run a local development server that serves the basic demo located in `demo/index.html`
+To run a local development server that serves the basic demo located in `demo/index.html`  
+
+## Events
+### Left click
+#### Node
+#### Link
+---
+### Right click
+#### Node
+#### Link
+---
+### Double click
+#### Node
+#### Link
+---
+### Mouse over
+#### Node
+#### Link
