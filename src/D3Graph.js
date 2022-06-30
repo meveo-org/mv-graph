@@ -79,6 +79,30 @@ export default class D3Graph {
             .selectAll("line")
             .data(this.graph.links)
             .enter().append("line")
+            //Click on link event
+            .on("click", (link) => {
+                const event = new CustomEvent("link-click", {
+                    detail: link,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
+            //Double click on link
+            .on("dblclick", (link) => {
+                const event = new CustomEvent("link-dblclick", {
+                    detail: link,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
+            //Mouseover on link event
+            .on("mouseover", (link) => {
+                const event = new CustomEvent("link-mouseover", {
+                    detail: link,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
 
         // set the data and properties of node circles
         this.node = this.svg.append("g")
@@ -86,8 +110,25 @@ export default class D3Graph {
             .selectAll("circle")
             .data(this.graph.nodes)
             .enter().append("circle")
+            //Click on node event
             .on("click", (node) => {
                 const event = new CustomEvent("node-click", {
+                    detail: node,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
+            //Double click on node
+            .on("dblclick", (node) => {
+                const event = new CustomEvent("node-dblclick", {
+                    detail: node,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
+            //Mouseover on node event
+            .on("mouseover", (node) => {
+                const event = new CustomEvent("node-mouseover", {
                     detail: node,
                     bubbles: true
                 });
