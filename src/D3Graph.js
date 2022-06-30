@@ -42,7 +42,7 @@ const forceProperties = {
  */
 export default class D3Graph {
 
-    constructor(svg, data) {
+    constructor(svg, data, width, height) {
         this.data = data;
 
         this.svg = d3.select(svg);
@@ -55,7 +55,15 @@ export default class D3Graph {
         // the data - an object with nodes and links
         this.graph = data;
 
+        //graph dimension
+        this.widthR = width;
+        this.heightR = height;
+
         this.simulation = d3.forceSimulation();
+    }
+
+    dispatch(event) {
+        console.log("Implement me !", event);
     }
 
     initializeSimulation() {
@@ -70,7 +78,7 @@ export default class D3Graph {
             .attr("class", "links")
             .selectAll("line")
             .data(this.graph.links)
-            .enter().append("line");
+            .enter().append("line")
 
         // set the data and properties of node circles
         this.node = this.svg.append("g")
@@ -78,6 +86,13 @@ export default class D3Graph {
             .selectAll("circle")
             .data(this.graph.nodes)
             .enter().append("circle")
+            .on("click", (node) => {
+                const event = new CustomEvent("node-click", {
+                    detail: node,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
             .call(d3.drag()
                 .on("start", this.dragstarted)
                 .on("drag", this.dragged)
@@ -95,7 +110,7 @@ export default class D3Graph {
             .attr("stroke", forceProperties.charge.strength > 0 ? "blue" : "red")
             .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
 
-        this.link.attr("stroke-width", forceProperties.link.enabled ? 1 : .5)
+        this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
             .attr("opacity", forceProperties.link.enabled ? 1 : 0);
     }
 
@@ -105,16 +120,18 @@ export default class D3Graph {
     }
 
     ticked = () => {
+        let widthNb = this.widthR;
+        let heightNb = this.heightR;
         if (this.link && this.node) {
             this.link
-                .attr("x1", function (d) { return d.source.x; })
-                .attr("y1", function (d) { return d.source.y; })
-                .attr("x2", function (d) { return d.target.x; })
-                .attr("y2", function (d) { return d.target.y; });
+                .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
+                .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
+                .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
+                .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
 
             this.node
-                .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(1500 - forceProperties.collide.radius, d.x)); })
-                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(900 - forceProperties.collide.radius, d.y)); });
+                .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
+                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
             d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha() * 100) + '%');
         }
     }

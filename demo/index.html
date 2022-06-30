@@ -24,11 +24,11 @@
 
 <body>
   <div id="demo"></div>
-
   <script type="module">
     import { html, render } from 'lit';
     import '../mv-graph.js';
     import data from "./miserables.js";
+    import './graph-listener.js';
 
     function dataUpdated(newData) {
       console.log(newData);
@@ -36,11 +36,10 @@
 
     render(
       html`
-        <mv-graph .data=${data} @data-updated=${dataUpdated}></mv-graph>
+          <graph-listener></graph-listener>
       `,
       document.querySelector('#demo')
     );
-
 
   </script>
 </body>

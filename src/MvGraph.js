@@ -39,14 +39,25 @@ export class MvGraph extends LitElement {
 
   firstUpdated() {
     const svg = this.shadowRoot.querySelector("svg");
-    this.graph = new D3Graph(svg, this.data);
+    this.graph = new D3Graph(svg, this.data, 1500, 900);
+    this.graph.dispatch = (e) => this.dispatchEvent(e);
     this.graph.displaySvg();
   }
+
+  // _tryFocus(e) {
+  //   if (e) {
+  //     const detail = e.explicitOriginalTarget;
+  //     const event = new CustomEvent('focus', {
+  //       detail,
+  //       bubbles: true
+  //     });
+  //     this.dispatchEvent(event);
+  //   }
+  // }
 
   render() {
     return html`
       <svg width="1500px" height="900px"></svg>
     `;
   }
-
 }
