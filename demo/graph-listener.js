@@ -12,17 +12,14 @@ export default class GraphListener extends LitElement {
     }
 
     _clickNode(e) {
-        console.clear();
         console.log("click on a node : ", e.detail);
     }
 
     _dblclickNode(e) {
-        console.clear();
         console.log("Double click on this node : ", e.detail);
     }
 
     _rClickNode(e) {
-        console.clear();
         console.log("Right click on this node : ", e.detail);
     }
 
@@ -32,22 +29,24 @@ export default class GraphListener extends LitElement {
 
 
     _clickLink(e) {
-        console.clear();
         console.log("click on a link : ", e.detail);
     }
 
     _dblclickLink(e) {
-        console.clear();
         console.log("Double click on this link : ", e.detail);
     }
 
     _rClickLink(e) {
-        console.clear();
         console.log("Right click on this link : ", e.detail);
     }
 
     _mouseOverLink(e) {
         console.log("Mouse over this link : ", e.detail);
+    }
+
+    _svgClick(e) {
+        console.clear();
+        console.log("Reset console by not clicking a node or link : ", e.detail);
     }
 
     render() {
@@ -62,6 +61,7 @@ export default class GraphListener extends LitElement {
                 @link-dblclick=${this._dblclickLink}
                 @link-rclick=${this._rClickLink}
                 @link-mouseover=${this._mouseOverLink}
+                @svg-click=${this._svgClick}
             ></mv-graph>
         `;
     }

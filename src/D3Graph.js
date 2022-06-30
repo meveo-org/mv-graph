@@ -73,6 +73,17 @@ export default class D3Graph {
     }
 
     initializeDisplay() {
+        this.svg = this.svg
+            .on("click", (svg) => {
+                if (svg.explicitOriginalTarget.nodeName == "svg") {
+                    const event = new CustomEvent("svg-click", {
+                        detail: svg,
+                        bubbles: true
+                    });
+                    this.dispatch(event);
+                }
+            })
+
         // set the data and properties of link lines
         this.link = this.svg.append("g")
             .attr("class", "links")
