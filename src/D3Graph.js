@@ -135,18 +135,18 @@ export default class D3Graph {
                 });
                 this.dispatch(event);
             })
-            //Mouseover on node event
-            .on("mouseover", (node) => {
-                const event = new CustomEvent("node-mouseover", {
+            //Right Click on node event
+            .on("contextmenu", (node) => {
+                node.preventDefault();
+                const event = new CustomEvent("node-rclick", {
                     detail: node,
                     bubbles: true
                 });
                 this.dispatch(event);
             })
-            //Right Click on node event
-            .on("contextmenu", (node) => {
-                node.preventDefault();
-                const event = new CustomEvent("node-rclick", {
+            //Mouseover on node event
+            .on("mouseover", (node) => {
+                const event = new CustomEvent("node-mouseover", {
                     detail: node,
                     bubbles: true
                 });
