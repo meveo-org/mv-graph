@@ -95,6 +95,15 @@ export default class D3Graph {
                 });
                 this.dispatch(event);
             })
+            //Right Click on link event
+            .on("contextmenu", (link) => {
+                link.preventDefault();
+                const event = new CustomEvent("link-rclick", {
+                    detail: link,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
             //Mouseover on link event
             .on("mouseover", (link) => {
                 const event = new CustomEvent("link-mouseover", {
@@ -129,6 +138,15 @@ export default class D3Graph {
             //Mouseover on node event
             .on("mouseover", (node) => {
                 const event = new CustomEvent("node-mouseover", {
+                    detail: node,
+                    bubbles: true
+                });
+                this.dispatch(event);
+            })
+            //Right Click on node event
+            .on("contextmenu", (node) => {
+                node.preventDefault();
+                const event = new CustomEvent("node-rclick", {
                     detail: node,
                     bubbles: true
                 });
