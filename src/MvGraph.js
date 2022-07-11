@@ -44,17 +44,6 @@ export class MvGraph extends LitElement {
     this.graph.displaySvg();
   }
 
-  // _tryFocus(e) {
-  //   if (e) {
-  //     const detail = e.explicitOriginalTarget;
-  //     const event = new CustomEvent('focus', {
-  //       detail,
-  //       bubbles: true
-  //     });
-  //     this.dispatchEvent(event);
-  //   }
-  // }
-
   render() {
     return html`
       <svg width="1500px" height="900px"></svg>

@@ -73,14 +73,10 @@ export default class D3Graph {
     }
 
     initializeDisplay() {
-        this.svg = this.svg
-            .on("click", (svg) => {
-                if (svg.explicitOriginalTarget.nodeName == "svg") {
-                    const event = new CustomEvent("svg-click", {
-                        detail: svg,
-                        bubbles: true
-                    });
-                    this.dispatch(event);
+        this.svg
+            .on("click", (d3event, svg) => {
+                if (d3event.explicitOriginalTarget.nodeName == "svg") {
+                    this.differentClick(d3event, svg);
                 }
             })
 
@@ -91,37 +87,21 @@ export default class D3Graph {
             .data(this.graph.links)
             .enter().append("line")
             //Click on link event
-            .on("click", (link) => {
-                const event = new CustomEvent("link-click", {
-                    detail: link,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("click", (d3event, link) => {
+                this.differentClick(d3event, link);
             })
             //Double click on link
-            .on("dblclick", (link) => {
-                const event = new CustomEvent("link-dblclick", {
-                    detail: link,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("dblclick", (d3event, link) => {
+                //TODO
             })
             //Right Click on link event
-            .on("contextmenu", (link) => {
-                link.preventDefault();
-                const event = new CustomEvent("link-rclick", {
-                    detail: link,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("contextmenu", (d3event, link) => {
+                d3event.preventDefault();
+                //TODO
             })
             //Mouseover on link event
-            .on("mouseover", (link) => {
-                const event = new CustomEvent("link-mouseover", {
-                    detail: link,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("mouseover", (d3event, link) => {
+                //TODO
             })
 
         // set the data and properties of node circles
@@ -131,37 +111,21 @@ export default class D3Graph {
             .data(this.graph.nodes)
             .enter().append("circle")
             //Click on node event
-            .on("click", (node) => {
-                const event = new CustomEvent("node-click", {
-                    detail: node,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("click", (d3event, node) => {
+                this.differentClick(d3event, node);
             })
             //Double click on node
-            .on("dblclick", (node) => {
-                const event = new CustomEvent("node-dblclick", {
-                    detail: node,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("dblclick", (d3event, node) => {
+                //TODO
             })
             //Right Click on node event
-            .on("contextmenu", (node) => {
-                node.preventDefault();
-                const event = new CustomEvent("node-rclick", {
-                    detail: node,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("contextmenu", (d3event, node) => {
+                d3event.preventDefault();
+                //TODO
             })
             //Mouseover on node event
-            .on("mouseover", (node) => {
-                const event = new CustomEvent("node-mouseover", {
-                    detail: node,
-                    bubbles: true
-                });
-                this.dispatch(event);
+            .on("mouseover", (d3event, node) => {
+                //TODO
             })
             .call(d3.drag()
                 .on("start", this.dragstarted)
@@ -264,6 +228,58 @@ export default class D3Graph {
         if (!event.active) this.simulation.alphaTarget(0.0001);
         d.fx = null;
         d.fy = null;
+    }
+
+    differentClick = (d3event, object) => {
+        if (d3event.ctrlKey) {
+            console.log(d3event.ctrlKey);
+            this.svg.on("mousedown", (d3event) => {
+                this.isSelectionning = true;
+                console.log("mouse down : ", d3event.clientX, d3event.clientY);
+                this.p = [d3event.clientX, d3event.clientY];
+                this.svg.append("rect")
+                    .attr("x", d3event.clientX - 200)
+                    .attr("y", d3event.clientY - 20)
+                    .attr("width", 0)
+                    .attr("height", 0)
+                    .attr('stroke', 'lightgray')
+                    .attr('stroke-dasharray', '10px')
+                    .attr('stroke-opacity','1')
+                    .attr('fill','transparent');
+            }).on("mousemove", (mouseMove, object) => {
+                    if (mouseMove.ctrlKey && this.isSelectionning) {
+                        console.log("OBJECT on ctrl move", object);
+                        if (mouseMove.clientX - this.p[0] > 1) {
+                            this.svg.select("rect")
+                                .attr("width", mouseMove.clientX - this.p[0]);
+                        } else {
+                            this.svg.select("rect")
+                                .attr("width", Math.abs(mouseMove.clientX - this.p[0]))
+                                .attr("x", (this.p[0] - Math.abs(mouseMove.clientX - this.p[0]) - 200))
+                        }
+
+                        if (mouseMove.clientY - this.p[1] > 1) {
+                            this.svg.select("rect")
+                                .attr("height", mouseMove.clientY - this.p[1]);
+                        } else {
+                            this.svg.select("rect")
+                                .attr("height", Math.abs(mouseMove.clientY - this.p[1]))
+                                .attr("y", (this.p[1] - Math.abs(mouseMove.clientY - this.p[1]) - 20));
+                        }
+                    }
+            }).on("mouseup", (mouseUp) => {
+                console.log("mouse up", mouseUp.clientX, mouseUp.clientY);
+                this.svg.selectAll( "rect").remove();
+                this.isSelectionning = false;
+            });
+        } else if (d3event.shiftKey) {
+            console.log("shift key pressed");
+        } else if (d3event.altKey) {
+            console.log("alt key pressed");
+        } else {
+            console.log("Element on click => ", object);
+            console.log("simple click")
+        }
     }
 }
 
