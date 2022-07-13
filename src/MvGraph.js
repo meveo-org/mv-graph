@@ -7,7 +7,6 @@ export class MvGraph extends LitElement {
     return css`
       :host {
         display: block;
-        padding: 25px;
         color: var(--mv-graph-text-color, #000);
       }
 
@@ -23,6 +22,11 @@ export class MvGraph extends LitElement {
       svg {
         border-style: solid;
       }
+
+      .node.selectedNode {
+        display : inline;
+        stroke: white;
+    }
     `;
   }
 

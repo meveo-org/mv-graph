@@ -233,16 +233,23 @@ export default class D3Graph {
     }
 
     differentClick = (d3event, object) => {
+        if (!d3event.ctrlKey) {
+            this.isSelectionning = false;
+            this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
+        }
         if (d3event.ctrlKey) {
+
+            var clickOrigin = null;
             this.svg.on("mousedown", (d3event) => {
+                clickOrigin = d3event;
                 this.isSelectionning = true;
                 this.leftUp = [d3event.clientX, d3event.clientY];
                 this.svg.append("rect")
-                    .attr("x", this.leftUp[0] - 200)
-                    .attr("y", this.leftUp[1] - 21)
+                    .attr("x", this.leftUp[0] )
+                    .attr("y", this.leftUp[1] )
                     .attr("width", 0)
                     .attr("height", 0)
-                    .attr('stroke', 'lightgray')
+                    .attr('stroke', 'black')
                     .attr('stroke-dasharray', '10px')
                     .attr('stroke-opacity','1')
                     .attr('fill','transparent');
@@ -254,7 +261,7 @@ export default class D3Graph {
                     } else {
                         this.svg.select("rect")
                             .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
-                            .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) - 200))
+                            .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) ))
                     }
             
                     if (mouseMove.clientY - this.leftUp[1] > 1) {
@@ -263,32 +270,36 @@ export default class D3Graph {
                     } else {
                         this.svg.select("rect")
                             .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
-                            .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) - 21));
+                            .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
                     }
-
-                    this.svg.selectAll("circle.ci-node-element").each((data, index) => {
-                        // console.log(data, " AND ", index);
-                        this.rightUp = [this.leftUp[0] - 200, this.leftUp[1] - 21 + Math.abs(mouseMove.clientY - this.leftUp[1])];
-                        this.leftBottom = [(this.leftUp[0] - 200) + Math.abs(mouseMove.clientX - this.leftUp[0]), this.leftUp[1] - 21];
-                        this.rightBottom = [(this.leftUp[0] - 200) + Math.abs(mouseMove.clientX - this.leftUp[0]), (this.leftUp[1] - 21    ) + Math.abs(mouseMove.clientY - this.leftUp[1])];
+                    this.svg.selectAll("circle.ci-node-element").each(function (data, index) {
+                        var leftUpAno = [clickOrigin.clientX, clickOrigin.clientY];
+                        var rightUpAno = [leftUpAno[0], leftUpAno[1] + Math.abs(mouseMove.clientY - leftUpAno[1])];
+                        var leftBottomAno = [leftUpAno[0] + Math.abs(mouseMove.clientX - leftUpAno[0]), leftUpAno[1] ];
+                        var rightBottomAno = [(leftUpAno[0] ) + Math.abs(mouseMove.clientX - leftUpAno[0]), (leftUpAno[1] ) + Math.abs(mouseMove.clientY - leftUpAno[1])];
                         if (
-                            !this.svg.selectAll("circle").classed("selectedNode") &&
-                            (this.leftUp[0] - 200) < data.x &&
-                            (this.leftUp[1] - 21) < data.y &&
-                            this.rightUp[0] < data.x &&
-                            this.rightUp[1] > data.y &&
-                            this.leftBottom[0] > data.x &&
-                            this.leftBottom[1] < data.y &&
-                            this.rightBottom[0] > data.x &&
-                            this.rightBottom[1] > data.y
+                            !d3.select(this).classed("selectedNode") &&
+                            leftUpAno[0] < this.getAttribute("cx") &&
+                            leftUpAno[1] < this.getAttribute("cy") &&
+
+                            rightUpAno[0] < this.getAttribute("cx") &&
+                            rightUpAno[1] > this.getAttribute("cy") &&
+
+                            leftBottomAno[0] > this.getAttribute("cx") &&
+                            leftBottomAno[1] < this.getAttribute("cy") &&
+
+                            rightBottomAno[0] > this.getAttribute("cx") &&
+                            rightBottomAno[1] > this.getAttribute("cy")
                         ) {
-                            console.log("Bonsoir again node > ", data);
+                            d3.select( this)
+                                .classed( "selection", true)
+                                .classed( "selectedNode", true);
                         }
                     })
                 }
             }).on("mouseup", () => {
-                this.svg.selectAll( "rect").remove();
-                this.isSelectionning = false;
+                this.svg.selectAll("rect").remove();
+                this.svg.selectAll('circle.ci-node-element.selection').classed( "selection", false);
             });
         } else if (d3event.shiftKey) {
             console.log("shift key pressed");
@@ -298,7 +309,7 @@ export default class D3Graph {
             console.log("simple click");
             console.log("Element on click => ", object);
         }
-    }
+    }   
 }
 
 
