@@ -107,6 +107,7 @@ export default class D3Graph {
         // set the data and properties of node circles
         this.node = this.svg.append("g")
             .attr("class", "nodes")
+            .attr("id", "svgGroup")
             .selectAll("circle")
             .data(this.graph.nodes)
             .enter().append("circle")
@@ -165,7 +166,8 @@ export default class D3Graph {
 
             this.node
                 .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
-                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
+                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); })
+                .attr("class", "node ci-node-element");
             d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha() * 100) + '%');
         }
     }
@@ -232,43 +234,59 @@ export default class D3Graph {
 
     differentClick = (d3event, object) => {
         if (d3event.ctrlKey) {
-            console.log(d3event.ctrlKey);
             this.svg.on("mousedown", (d3event) => {
                 this.isSelectionning = true;
-                console.log("mouse down : ", d3event.clientX, d3event.clientY);
-                this.p = [d3event.clientX, d3event.clientY];
+                this.leftUp = [d3event.clientX, d3event.clientY];
                 this.svg.append("rect")
-                    .attr("x", d3event.clientX - 200)
-                    .attr("y", d3event.clientY - 20)
+                    .attr("x", this.leftUp[0] - 200)
+                    .attr("y", this.leftUp[1] - 21)
                     .attr("width", 0)
                     .attr("height", 0)
                     .attr('stroke', 'lightgray')
                     .attr('stroke-dasharray', '10px')
                     .attr('stroke-opacity','1')
                     .attr('fill','transparent');
-            }).on("mousemove", (mouseMove, object) => {
-                    if (mouseMove.ctrlKey && this.isSelectionning) {
-                        console.log("OBJECT on ctrl move", object);
-                        if (mouseMove.clientX - this.p[0] > 1) {
-                            this.svg.select("rect")
-                                .attr("width", mouseMove.clientX - this.p[0]);
-                        } else {
-                            this.svg.select("rect")
-                                .attr("width", Math.abs(mouseMove.clientX - this.p[0]))
-                                .attr("x", (this.p[0] - Math.abs(mouseMove.clientX - this.p[0]) - 200))
-                        }
-
-                        if (mouseMove.clientY - this.p[1] > 1) {
-                            this.svg.select("rect")
-                                .attr("height", mouseMove.clientY - this.p[1]);
-                        } else {
-                            this.svg.select("rect")
-                                .attr("height", Math.abs(mouseMove.clientY - this.p[1]))
-                                .attr("y", (this.p[1] - Math.abs(mouseMove.clientY - this.p[1]) - 20));
-                        }
+            }).on("mousemove", (mouseMove) => {
+                if (mouseMove.ctrlKey && this.isSelectionning) {
+                    if (mouseMove.clientX - this.leftUp[0] > 1) {
+                        this.svg.select("rect")
+                            .attr("width", mouseMove.clientX - this.leftUp[0]);
+                    } else {
+                        this.svg.select("rect")
+                            .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
+                            .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) - 200))
                     }
-            }).on("mouseup", (mouseUp) => {
-                console.log("mouse up", mouseUp.clientX, mouseUp.clientY);
+            
+                    if (mouseMove.clientY - this.leftUp[1] > 1) {
+                        this.svg.select("rect")
+                            .attr("height", mouseMove.clientY - this.leftUp[1]);
+                    } else {
+                        this.svg.select("rect")
+                            .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
+                            .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) - 21));
+                    }
+
+                    this.svg.selectAll("circle.ci-node-element").each((data, index) => {
+                        // console.log(data, " AND ", index);
+                        this.rightUp = [this.leftUp[0] - 200, this.leftUp[1] - 21 + Math.abs(mouseMove.clientY - this.leftUp[1])];
+                        this.leftBottom = [(this.leftUp[0] - 200) + Math.abs(mouseMove.clientX - this.leftUp[0]), this.leftUp[1] - 21];
+                        this.rightBottom = [(this.leftUp[0] - 200) + Math.abs(mouseMove.clientX - this.leftUp[0]), (this.leftUp[1] - 21    ) + Math.abs(mouseMove.clientY - this.leftUp[1])];
+                        if (
+                            !this.svg.selectAll("circle").classed("selectedNode") &&
+                            (this.leftUp[0] - 200) < data.x &&
+                            (this.leftUp[1] - 21) < data.y &&
+                            this.rightUp[0] < data.x &&
+                            this.rightUp[1] > data.y &&
+                            this.leftBottom[0] > data.x &&
+                            this.leftBottom[1] < data.y &&
+                            this.rightBottom[0] > data.x &&
+                            this.rightBottom[1] > data.y
+                        ) {
+                            console.log("Bonsoir again node > ", data);
+                        }
+                    })
+                }
+            }).on("mouseup", () => {
                 this.svg.selectAll( "rect").remove();
                 this.isSelectionning = false;
             });
@@ -277,8 +295,8 @@ export default class D3Graph {
         } else if (d3event.altKey) {
             console.log("alt key pressed");
         } else {
+            console.log("simple click");
             console.log("Element on click => ", object);
-            console.log("simple click")
         }
     }
 }
