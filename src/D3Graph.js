@@ -62,16 +62,26 @@ export default class D3Graph {
         this.simulation = d3.forceSimulation();
     }
 
+    /**
+     * Dispatch a customEvent
+     * @param {event} event 
+     */
     dispatch(event) {
         console.log("Implement me !", event);
     }
 
+    /**
+     * Initialize simulation with node, link and force update
+     */
     initializeSimulation() {
         this.simulation.nodes(this.graph.nodes);
         this.initializeForces();
         this.simulation.on("tick", this.ticked);
     }
 
+    /**
+     * Initialize display of the svg
+     */
     initializeDisplay() {
         this.svg
             .on("click", (d3event, svg) => {
@@ -140,6 +150,9 @@ export default class D3Graph {
         this.updateDisplay();
     }
 
+    /**
+     * Update Display of the svg
+     */
     updateDisplay() {
         this.node.attr("r", forceProperties.collide.radius)
             .attr("stroke", forceProperties.charge.strength > 0 ? "blue" : "red")
@@ -149,11 +162,17 @@ export default class D3Graph {
             .attr("opacity", forceProperties.link.enabled ? 1 : 0);
     }
 
+    /**
+     * Display svg
+     */
     displaySvg() {
         this.initializeDisplay();
         this.initializeSimulation();
     }
 
+    /**
+     * Update graph position and force
+     */
     ticked = () => {
         let widthNb = this.widthR;
         let heightNb = this.heightR;
@@ -172,6 +191,9 @@ export default class D3Graph {
         }
     }
 
+    /**
+     * Initialize force
+     */
     initializeForces() {
         // add forces and associate each with a name
         this.simulation
@@ -185,6 +207,9 @@ export default class D3Graph {
         this.updateForces();
     }
 
+    /**
+     * 
+     */
     updateForces() {
         // get each force by name and update the properties
         this.simulation.force("center")
@@ -215,36 +240,59 @@ export default class D3Graph {
         this.simulation.alpha(1).restart();
     }
 
+    /**
+     * Start drag a node
+     * @param {event} event 
+     * @param {coords} d 
+     */
     dragstarted = (event, d) => {
         if (!event.active) this.simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
 
+    /**
+     * Drag a node
+     * @param {event} event 
+     * @param {coords} d 
+     */
     dragged = (event, d) => {
         d.fx = event.x;
         d.fy = event.y;
     }
 
+    /**
+     * End drag a node
+     * @param {event} event 
+     * @param {coords} d 
+     */
     dragended = (event, d) => {
         if (!event.active) this.simulation.alphaTarget(0.0001);
         d.fx = null;
         d.fy = null;
     }
 
+    /**
+     * Redirect according to the click
+     * @param {click} d3event 
+     * @param {objectClicked} object 
+     */
     differentClick = (d3event, object) => {
+
         if (!d3event.ctrlKey) {
             this.isSelectionning = false;
             this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
         }
-        if (d3event.ctrlKey) {
 
-            var clickOrigin = null;
+        // Ctrl click
+        if (d3event.ctrlKey) {
+            var clickOrigin = 0;
             this.svg.on("mousedown", (d3event) => {
                 clickOrigin = d3event;
                 this.isSelectionning = true;
                 this.leftUp = [d3event.clientX, d3event.clientY];
                 this.svg.append("rect")
+                    .attr("class", "rectangleSelection")
                     .attr("x", this.leftUp[0] )
                     .attr("y", this.leftUp[1] )
                     .attr("width", 0)
@@ -298,18 +346,25 @@ export default class D3Graph {
                     })
                 }
             }).on("mouseup", () => {
+                console.log(this.leftBottomAno);
                 this.svg.selectAll("rect").remove();
                 this.svg.selectAll('circle.ci-node-element.selection').classed( "selection", false);
             });
+
+        // Shift click
         } else if (d3event.shiftKey) {
             console.log("shift key pressed");
+
+        // Alt click
         } else if (d3event.altKey) {
             console.log("alt key pressed");
+
+        // Simple click
         } else {
             console.log("simple click");
             console.log("Element on click => ", object);
         }
-    }   
+    }
 }
 
 
