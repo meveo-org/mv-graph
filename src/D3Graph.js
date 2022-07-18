@@ -117,7 +117,6 @@ export default class D3Graph {
         // set the data and properties of node circles
         this.node = this.svg.append("g")
             .attr("class", "nodes")
-            .attr("id", "svgGroup")
             .selectAll("circle")
             .data(this.graph.nodes)
             .enter().append("circle")
@@ -178,14 +177,14 @@ export default class D3Graph {
         let heightNb = this.heightR;
         if (this.link && this.node) {
             this.link
-                .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
-                .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
-                .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
-                .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
+                .attr("x1", function (d) { return d.source.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x))); })
+                .attr("y1", function (d) { return d.source.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y))); })
+                .attr("x2", function (d) { return d.target.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x))); })
+                .attr("y2", function (d) { return d.target.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y))); });
 
             this.node
-                .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
-                .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); })
+                .attr("cx", function (d) { return d.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x))); })
+                .attr("cy", function(d) { return d.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y))); })
                 .attr("class", "node ci-node-element");
             d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha() * 100) + '%');
         }
@@ -286,9 +285,7 @@ export default class D3Graph {
 
         // Ctrl click
         if (d3event.ctrlKey) {
-            var clickOrigin = 0;
             this.svg.on("mousedown", (d3event) => {
-                clickOrigin = d3event;
                 this.isSelectionning = true;
                 this.leftUp = [d3event.clientX, d3event.clientY];
                 this.svg.append("rect")
@@ -320,33 +317,47 @@ export default class D3Graph {
                             .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
                             .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
                     }
-                    this.svg.selectAll("circle.ci-node-element").each(function (data, index) {
-                        var leftUpAno = [clickOrigin.clientX, clickOrigin.clientY];
-                        var rightUpAno = [leftUpAno[0], leftUpAno[1] + Math.abs(mouseMove.clientY - leftUpAno[1])];
-                        var leftBottomAno = [leftUpAno[0] + Math.abs(mouseMove.clientX - leftUpAno[0]), leftUpAno[1] ];
-                        var rightBottomAno = [(leftUpAno[0] ) + Math.abs(mouseMove.clientX - leftUpAno[0]), (leftUpAno[1] ) + Math.abs(mouseMove.clientY - leftUpAno[1])];
-                        if (
-                            !d3.select(this).classed("selectedNode") &&
-                            leftUpAno[0] < this.getAttribute("cx") &&
-                            leftUpAno[1] < this.getAttribute("cy") &&
+                    this.svg.selectAll("circle.ci-node-element").each(function (/* data, index */) {
+                        if (d3.select(this.parentNode.parentNode).select("rect")._groups[0][0]) {
+                            let rectangle = d3.select(this.parentNode.parentNode).select("rect")._groups[0][0];
+                            let leftUpAno = [
+                                parseInt(rectangle.getAttribute("x")), 
+                                parseInt(rectangle.getAttribute("y"))
+                            ];
+                            let rightUpAno = [
+                                parseInt(rectangle.getAttribute("x")), 
+                                parseInt(rectangle.getAttribute("y")) + parseInt(rectangle.getAttribute("height"))
+                            ];
+                            let leftBottomAno = [
+                                parseInt(rectangle.getAttribute("x")) + parseInt(rectangle.getAttribute("width")),
+                                parseInt(rectangle.getAttribute("y"))
+                            ];
+                            let rightBottomAno = [
+                                parseInt(rectangle.getAttribute("x")) + parseInt(rectangle.getAttribute("width")), 
+                                parseInt(rectangle.getAttribute("y")) + parseInt(rectangle.getAttribute("height"))
+                            ];
+                            if (
+                                !d3.select(this).classed("selectedNode") &&
+                                leftUpAno[0] < this.getAttribute("cx") &&
+                                leftUpAno[1] < this.getAttribute("cy") &&
 
-                            rightUpAno[0] < this.getAttribute("cx") &&
-                            rightUpAno[1] > this.getAttribute("cy") &&
+                                rightUpAno[0] < this.getAttribute("cx") &&
+                                rightUpAno[1] > this.getAttribute("cy") &&
 
-                            leftBottomAno[0] > this.getAttribute("cx") &&
-                            leftBottomAno[1] < this.getAttribute("cy") &&
+                                leftBottomAno[0] > this.getAttribute("cx") &&
+                                leftBottomAno[1] < this.getAttribute("cy") &&
 
-                            rightBottomAno[0] > this.getAttribute("cx") &&
-                            rightBottomAno[1] > this.getAttribute("cy")
-                        ) {
-                            d3.select( this)
-                                .classed( "selection", true)
-                                .classed( "selectedNode", true);
+                                rightBottomAno[0] > this.getAttribute("cx") &&
+                                rightBottomAno[1] > this.getAttribute("cy")
+                            ) {
+                                d3.select(this)
+                                    .classed( "selection", true)
+                                    .classed( "selectedNode", true);
+                            }
                         }
                     })
                 }
             }).on("mouseup", () => {
-                console.log(this.leftBottomAno);
                 this.svg.selectAll("rect").remove();
                 this.svg.selectAll('circle.ci-node-element.selection').classed( "selection", false);
             });
