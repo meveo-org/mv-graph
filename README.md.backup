@@ -46,4 +46,4 @@ Retreive the link clicked
 ---
 ### Ctrl + click drag
 Select multiple node on the graph.  
-If ctrl is keep down 
+If ctrl is keep down selected node are keep in memory
