@@ -10,13 +10,13 @@ const forceProperties = {
     },
     charge: {
         enabled: true,
-        strength: -50,
-        distanceMin: 20,
+        strength: -80,
+        distanceMin: 1,
         distanceMax: 200
     },
     collide: {
         enabled: true,
-        strength: 1,
+        strength: 0.7,
         iterations: 1,
         radius: 10
     },
@@ -32,10 +32,28 @@ const forceProperties = {
     },
     link: {
         enabled: true,
-        distance: 50,
+        distance: 30,
         iterations: 1
     }
 };
+
+const colourPalette = [
+    "#fbefcc", 
+    "#f9ccac", 
+    "#f4a688", 
+    "#e0876a", 
+    "#fff2df", 
+    "#d9ad7c", 
+    "#a2836e", 
+    "#674d3c", 
+    "#f9d5e5", 
+    "#5b9aa0", 
+    "#d6d4e0", 
+    "#b8a9c9", 
+    "#622569", 
+    "#c83349", 
+    "#96ceb4"
+];
 
 /**
  * Graph class generator
@@ -58,6 +76,8 @@ export default class D3Graph {
         //graph dimension
         this.widthR = width;
         this.heightR = height;
+
+        this.updateSimu = true;
 
         this.simulation = d3.forceSimulation();
     }
@@ -96,21 +116,22 @@ export default class D3Graph {
             .selectAll("line")
             .data(this.graph.links)
             .enter().append("line")
+            .attr("class", "link ci-link-element")
             //Click on link event
             .on("click", (d3event, link) => {
                 this.differentClick(d3event, link);
             })
             //Double click on link
-            .on("dblclick", (d3event, link) => {
+            .on("dblclick", () => {
                 //TODO
             })
             //Right Click on link event
-            .on("contextmenu", (d3event, link) => {
+            .on("contextmenu", (d3event) => {
                 d3event.preventDefault();
                 //TODO
             })
             //Mouseover on link event
-            .on("mouseover", (d3event, link) => {
+            .on("mouseover", () => {
                 //TODO
             })
 
@@ -120,31 +141,28 @@ export default class D3Graph {
             .selectAll("circle")
             .data(this.graph.nodes)
             .enter().append("circle")
+            .attr("class", "node ci-node-element")
             //Click on node event
             .on("click", (d3event, node) => {
                 this.differentClick(d3event, node);
             })
             //Double click on node
-            .on("dblclick", (d3event, node) => {
+            .on("dblclick", () => {
                 //TODO
             })
             //Right Click on node event
-            .on("contextmenu", (d3event, node) => {
+            .on("contextmenu", (d3event) => {
                 d3event.preventDefault();
                 //TODO
             })
             //Mouseover on node event
-            .on("mouseover", (d3event, node) => {
+            .on("mouseover", () => {
                 //TODO
-            })
-            .call(d3.drag()
+            }).call(d3.drag()
                 .on("start", this.dragstarted)
                 .on("drag", this.dragged)
                 .on("end", this.dragended));
 
-        // node tooltip
-        this.node.append("title")
-            .text(function (d) { return d.id; });
         // visualize the graph
         this.updateDisplay();
     }
@@ -153,9 +171,11 @@ export default class D3Graph {
      * Update Display of the svg
      */
     updateDisplay() {
-        this.node.attr("r", forceProperties.collide.radius)
-            .attr("stroke", forceProperties.charge.strength > 0 ? "blue" : "red")
-            .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
+        this.node.attr("r", forceProperties.collide.radius);
+        this.node.each(function(datum) {
+            d3.select(this)
+                .attr("fill", colourPalette[datum.grp]);
+        });
 
         this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
             .attr("opacity", forceProperties.link.enabled ? 1 : 0);
@@ -173,21 +193,24 @@ export default class D3Graph {
      * Update graph position and force
      */
     ticked = () => {
+        if (this.updateSimu && (this.updateSimu == null || this.updateSimu == true)) {
+            this.initializeForces();
+            this.updateSimu = null;
+        } else if (!this.updateSimu && this.updateSimu != null) {
+            this.removeForces();
+        }
         let widthNb = this.widthR;
         let heightNb = this.heightR;
-        if (this.link && this.node) {
-            this.link
-                .attr("x1", function (d) { return d.source.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x))); })
-                .attr("y1", function (d) { return d.source.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y))); })
-                .attr("x2", function (d) { return d.target.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x))); })
-                .attr("y2", function (d) { return d.target.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y))); });
+        this.link
+            .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
+            .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
+            .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
+            .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
 
-            this.node
-                .attr("cx", function (d) { return d.x = Math.round(Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x))); })
-                .attr("cy", function(d) { return d.y = Math.round(Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y))); })
-                .attr("class", "node ci-node-element");
-            d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha() * 100) + '%');
-        }
+        this.node
+            .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
+            .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
+        d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha()*100) + '%');
     }
 
     /**
@@ -204,6 +227,16 @@ export default class D3Graph {
             .force("forceY", d3.forceY());
         // apply properties to each of the forces
         this.updateForces();
+    }
+
+    removeForces() {
+        this.simulation
+            .force("link", null)
+            .force("charge", null)
+            .force("collide", null)
+            .force("center", null)
+            .force("forceX", null)
+            .force("forceY", null);
     }
 
     /**
@@ -242,7 +275,7 @@ export default class D3Graph {
     /**
      * Start drag a node
      * @param {event} event 
-     * @param {coords} d 
+     * @param {object} d 
      */
     dragstarted = (event, d) => {
         if (!event.active) this.simulation.alphaTarget(0.3).restart();
@@ -253,17 +286,35 @@ export default class D3Graph {
     /**
      * Drag a node
      * @param {event} event 
-     * @param {coords} d 
+     * @param {object} d 
      */
     dragged = (event, d) => {
-        d.fx = event.x;
-        d.fy = event.y;
+        let selectedNode = this.svg.selectAll("circle.node.ci-node-element.selectedNode");
+        if (selectedNode._groups[0].length > 0) {
+            this.svg.selectAll("circle.node.ci-node-element.selectedNode").each((object) => {
+                let OldPoint = [d.x, d.y];
+                if (object == d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                } else {
+                    let translation = [
+                        event.x - OldPoint[0],
+                        event.y - OldPoint[1]
+                    ];
+                    object.x += translation[0];
+                    object.y += translation[1];
+                }
+            })
+        } else if (selectedNode._groups[0].length == 0) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
     }
 
     /**
      * End drag a node
      * @param {event} event 
-     * @param {coords} d 
+     * @param {object} d 
      */
     dragended = (event, d) => {
         if (!event.active) this.simulation.alphaTarget(0.0001);
@@ -277,7 +328,6 @@ export default class D3Graph {
      * @param {objectClicked} object 
      */
     differentClick = (d3event, object) => {
-
         if (!d3event.ctrlKey) {
             this.isSelectionning = false;
             this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
@@ -297,7 +347,9 @@ export default class D3Graph {
                     .attr('stroke', 'black')
                     .attr('stroke-dasharray', '10px')
                     .attr('stroke-opacity','1')
-                    .attr('fill','transparent');
+                    .attr('fill','transparent')
+                    .attr("rx", 5)
+                    .attr("ry", 5);
             }).on("mousemove", (mouseMove) => {
                 if (mouseMove.ctrlKey && this.isSelectionning) {
                     if (mouseMove.clientX - this.leftUp[0] > 1) {
@@ -365,14 +417,15 @@ export default class D3Graph {
         // Shift click
         } else if (d3event.shiftKey) {
             console.log("shift key pressed");
-
+            this.updateSimu = false;
         // Alt click
         } else if (d3event.altKey) {
+            this.updateSimu = true;
             console.log("alt key pressed");
 
         // Simple click
         } else {
-            console.log("simple click");
+            console.log("simple click here : ", d3event.clientX, d3event.clientY);
             console.log("Element on click => ", object);
         }
     }
