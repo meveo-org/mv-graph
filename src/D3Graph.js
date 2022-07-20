@@ -202,14 +202,14 @@ export default class D3Graph {
         let widthNb = this.widthR;
         let heightNb = this.heightR;
         this.link
-            .attr("x1", function (d) { return d.source.x = (Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x))); })
-            .attr("y1", function (d) { return d.source.y = (Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y))); })
-            .attr("x2", function (d) { return d.target.x = (Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x))); })
-            .attr("y2", function (d) { return d.target.y = (Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y))); });
+            .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
+            .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
+            .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
+            .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
 
         this.node
-            .attr("cx", function (d) { return d.x = (Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x))); })
-            .attr("cy", function(d) { return d.y = (Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y))); });
+            .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
+            .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
         d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha()*100) + '%');
     }
 
@@ -231,12 +231,12 @@ export default class D3Graph {
 
     removeForces() {
         this.simulation
-                .force("link", null)
-                .force("charge", null)
-                .force("collide", null)
-                .force("center", null)
-                .force("forceX", null)
-                .force("forceY", null);
+            .force("link", null)
+            .force("charge", null)
+            .force("collide", null)
+            .force("center", null)
+            .force("forceX", null)
+            .force("forceY", null);
     }
 
     /**
@@ -289,8 +289,26 @@ export default class D3Graph {
      * @param {object} d 
      */
     dragged = (event, d) => {
+        let selectedNode = this.svg.selectAll("circle.node.ci-node-element.selectedNode");
+        if (selectedNode._groups[0].length > 0) {
+            this.svg.selectAll("circle.node.ci-node-element.selectedNode").each((object) => {
+                let OldPoint = [d.x, d.y];
+                if (object == d) {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                } else {
+                    let translation = [
+                        event.x - OldPoint[0],
+                        event.y - OldPoint[1]
+                    ];
+                    object.x += translation[0];
+                    object.y += translation[1];
+                }
+            })
+        } else if (selectedNode._groups[0].length == 0) {
             d.fx = event.x;
             d.fy = event.y;
+        }
     }
 
     /**
