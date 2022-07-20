@@ -10,13 +10,13 @@ const forceProperties = {
     },
     charge: {
         enabled: true,
-        strength: -50,
-        distanceMin: 200,
+        strength: -80,
+        distanceMin: 1,
         distanceMax: 200
     },
     collide: {
         enabled: true,
-        strength: 1,
+        strength: 0.7,
         iterations: 1,
         radius: 10
     },
@@ -32,12 +32,28 @@ const forceProperties = {
     },
     link: {
         enabled: true,
-        distance: 50,
+        distance: 30,
         iterations: 1
     }
 };
 
-const colourPalette = ["#fbefcc", "#f9ccac", "#f4a688", "#e0876a", "#fff2df", "#d9ad7c", "#a2836e", "#674d3c", "#f9d5e5", "#5b9aa0", "#d6d4e0", "#b8a9c9", "#622569", "#c83349", "#96ceb4"];
+const colourPalette = [
+    "#fbefcc", 
+    "#f9ccac", 
+    "#f4a688", 
+    "#e0876a", 
+    "#fff2df", 
+    "#d9ad7c", 
+    "#a2836e", 
+    "#674d3c", 
+    "#f9d5e5", 
+    "#5b9aa0", 
+    "#d6d4e0", 
+    "#b8a9c9", 
+    "#622569", 
+    "#c83349", 
+    "#96ceb4"
+];
 
 /**
  * Graph class generator
@@ -155,9 +171,7 @@ export default class D3Graph {
      * Update Display of the svg
      */
     updateDisplay() {
-        this.node.attr("r", forceProperties.collide.radius)
-            .attr("stroke", forceProperties.charge.strength > 0 ? "blue" : "red")
-            .attr("stroke-width", forceProperties.charge.enabled == false ? 0 : Math.abs(forceProperties.charge.strength) / 15);
+        this.node.attr("r", forceProperties.collide.radius);
         this.node.each(function(datum) {
             d3.select(this)
                 .attr("fill", colourPalette[datum.grp]);

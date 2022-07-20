@@ -26,7 +26,14 @@ export class MvGraph extends LitElement {
       .node.selectedNode {
         display : inline;
         stroke: white;
-    }
+        stroke-width: 3px;
+      }
+
+      #button {
+        position: relative;
+        top: 0;
+        right: 0;
+      }
     `;
   }
 
