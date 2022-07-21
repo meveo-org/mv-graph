@@ -52,7 +52,8 @@ const colourPalette = [
     "#b8a9c9", 
     "#622569", 
     "#c83349", 
-    "#96ceb4"
+    "#96ceb4",
+    "#1d9964"
 ];
 
 /**
@@ -175,10 +176,21 @@ export default class D3Graph {
      * Update Display of the svg
      */
     updateDisplay() {
-        this.node.attr("r", forceProperties.collide.radius);
+        this.node.each(function(node) {
+            let radius = 5;
+            d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
+                if ((node.id == link.source) || (node.id == link.target)) {
+                    radius += .5;
+                }
+            });
+            d3.select(this).attr("r", radius);
+        });
+
         this.node.each(function(datum) {
-            d3.select(this)
-                .attr("fill", colourPalette[datum.grp]);
+            if (datum.grp) {
+                d3.select(this)
+                    .attr("fill", colourPalette[datum.grp]);
+            }
         });
 
         this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
@@ -359,10 +371,10 @@ export default class D3Graph {
                     .attr("y", this.leftUp[1] )
                     .attr("width", 0)
                     .attr("height", 0)
-                    .attr('stroke', 'black')
-                    .attr('stroke-dasharray', '10px')
+                    .attr('stroke', 'white')
                     .attr('stroke-opacity','1')
-                    .attr('fill','transparent')
+                    .attr('fill','white')
+                    .attr('fill-opacity', '.25')
                     .attr("rx", 5)
                     .attr("ry", 5);
             }).on("mousemove", (mouseMove) => {
