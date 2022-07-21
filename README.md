@@ -44,6 +44,12 @@ Retreive the node clicked
 Retreive the link clicked
 
 ---
+### Drag
+#### Node
+Move the node  
+If multiple node are selected, all node are moving
+
+---
 ### Ctrl + click drag
 Select multiple node on the graph.  
 If ctrl is keep down selected node are keep in memory
