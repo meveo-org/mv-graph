@@ -233,6 +233,9 @@ export default class D3Graph {
         this.updateForces();
     }
 
+    /**
+     * RemoveForces from graph to freeze node position
+     */
     removeForces() {
         this.simulation
             .force("link", null)
@@ -244,7 +247,7 @@ export default class D3Graph {
     }
 
     /**
-     * 
+     * Update forces of the graph
      */
     updateForces() {
         // get each force by name and update the properties
