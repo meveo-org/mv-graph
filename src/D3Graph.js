@@ -432,6 +432,23 @@ export default class D3Graph {
                                 d3.select(this)
                                     .classed( "selection", true)
                                     .classed( "selectedNode", true);
+                            } else if (
+                                !d3.select(this).classed("selectedNode") ||
+                                !(leftUpAno[0] < this.getAttribute("cx")) ||
+                                !(leftUpAno[1] < this.getAttribute("cy")) ||
+
+                                !(rightUpAno[0] < this.getAttribute("cx")) ||
+                                !(rightUpAno[1] > this.getAttribute("cy")) ||
+
+                                !(leftBottomAno[0] > this.getAttribute("cx")) ||
+                                !(leftBottomAno[1] < this.getAttribute("cy")) ||
+
+                                !(rightBottomAno[0] > this.getAttribute("cx")) ||
+                                !(rightBottomAno[1] > this.getAttribute("cy"))
+                            ) {
+                                d3.select(this)
+                                    .classed( "selection", false)
+                                    .classed( "selectedNode", false);
                             }
                         }
                     })
