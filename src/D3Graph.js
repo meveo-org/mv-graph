@@ -108,7 +108,11 @@ export default class D3Graph {
                 if (d3event.explicitOriginalTarget.nodeName == "svg") {
                     this.differentClick(d3event, svg);
                 }
-            })
+            });
+            // .call(d3.zoom().on("zoom", (event) => {
+            //     this.svg.selectAll("line.link").attr('transform', event.transform);
+            //     this.svg.selectAll("circle.node").attr("transform", event.transform);
+            // }));
 
         // set the data and properties of link lines
         this.link = this.svg.append("g")
@@ -284,27 +288,35 @@ export default class D3Graph {
     }
 
     /**
-     * Drag a node
+     * Drag a node or all selected node
      * @param {event} event 
      * @param {object} d 
      */
     dragged = (event, d) => {
         let selectedNode = this.svg.selectAll("circle.node.ci-node-element.selectedNode");
         if (selectedNode._groups[0].length > 0) {
+            let DragSelectedNode = false;
             this.svg.selectAll("circle.node.ci-node-element.selectedNode").each((object) => {
-                let OldPoint = [d.x, d.y];
                 if (object == d) {
-                    d.fx = event.x;
-                    d.fy = event.y;
-                } else {
-                    let translation = [
-                        event.x - OldPoint[0],
-                        event.y - OldPoint[1]
-                    ];
-                    object.x += translation[0];
-                    object.y += translation[1];
+                    DragSelectedNode = true;
                 }
-            })
+            });
+            if (DragSelectedNode) {
+                this.svg.selectAll("circle.node.ci-node-element.selectedNode").each((object) => {
+                    let OldPoint = [d.x, d.y];
+                    if (object == d) {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    } else {
+                        let translation = [
+                            event.x - OldPoint[0],
+                            event.y - OldPoint[1]
+                        ];
+                        object.x += translation[0];
+                        object.y += translation[1];
+                    }
+                })
+            }
         } else if (selectedNode._groups[0].length == 0) {
             d.fx = event.x;
             d.fy = event.y;
