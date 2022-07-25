@@ -52,8 +52,11 @@ const colourPalette = [
     "#b8a9c9", 
     "#622569", 
     "#c83349", 
-    "#96ceb4"
+    "#96ceb4",
+    "#1d9964"
 ];
+
+const fx = JSON.parse(localStorage.getItem("fixedNodes"));
 
 /**
  * Graph class generator
@@ -99,19 +102,133 @@ export default class D3Graph {
         this.simulation.on("tick", this.ticked);
     }
 
+    toggleNode(node) {
+        let d3Selection = this.svg.select("#"+node.id)
+        d3Selection
+            .classed( "selection", true)
+            .classed( "selectedNode", true);
+    }
+
+    deselectAll(){
+        this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
+    }
+
+    createRectangle(d3event) {
+        this.leftUp = [d3event.clientX, d3event.clientY];
+                this.svg.append("rect")
+                    .attr("class", "rectangleSelection")
+                    .attr("x", this.leftUp[0] )
+                    .attr("y", this.leftUp[1] )
+                    .attr("width", 0)
+                    .attr("height", 0)
+                    .attr('stroke', 'white')
+                    .attr('stroke-opacity','1')
+                    .attr('fill','white')
+                    .attr('fill-opacity', '.25')
+                    .attr("rx", 5)
+                    .attr("ry", 5);
+    }
+
+    drawRectangle(mouseMove) {
+        if (mouseMove.clientX - this.leftUp[0] > 1) {
+            this.svg.select("rect")
+                .attr("width", mouseMove.clientX - this.leftUp[0]);
+        } else {
+            this.svg.select("rect")
+                .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
+                .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) ))
+        }
+
+        if (mouseMove.clientY - this.leftUp[1] > 1) {
+            this.svg.select("rect")
+                .attr("height", mouseMove.clientY - this.leftUp[1]);
+        } else {
+            this.svg.select("rect")
+                .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
+                .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
+        }
+    }
+
+    selectNode(rect) {
+        this.svg.selectAll("circle.ci-node-element").each(function (/* data, index */) {
+            let leftUpAno = [
+                parseInt(rect.getAttribute("x")), 
+                parseInt(rect.getAttribute("y"))
+            ];
+            let rightUpAno = [
+                parseInt(rect.getAttribute("x")), 
+                parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+            ];
+            let leftBottomAno = [
+                parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")),
+                parseInt(rect.getAttribute("y"))
+            ];
+            let rightBottomAno = [
+                parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")), 
+                parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+            ];
+
+            if (
+                !d3.select(this).classed("selectedNode") &&
+                leftUpAno[0] < this.getAttribute("cx") &&
+                leftUpAno[1] < this.getAttribute("cy") &&
+
+                rightUpAno[0] < this.getAttribute("cx") &&
+                rightUpAno[1] > this.getAttribute("cy") &&
+
+                leftBottomAno[0] > this.getAttribute("cx") &&
+                leftBottomAno[1] < this.getAttribute("cy") &&
+
+                rightBottomAno[0] > this.getAttribute("cx") &&
+                rightBottomAno[1] > this.getAttribute("cy")
+            ) {
+                d3.select(this)
+                    .classed( "selection", true)
+                    .classed( "selectedNode", true);
+            }
+        });
+    }
+
+    removeRectangle(rect) {
+        rect.remove();
+    }
+
     /**
      * Initialize display of the svg
      */
     initializeDisplay() {
         this.svg
-            .on("click", (d3event, svg) => {
-                if (d3event.explicitOriginalTarget.nodeName == "svg") {
-                    this.differentClick(d3event, svg);
+            .on("click", (d3event) => {
+                if (d3event.explicitOriginalTarget.nodeName == "svg" && !d3event.ctrlKey) {
+                    this.deselectAll();
+                } 
+                if (d3event.shiftKey) {
+                    console.log("shift key pressed");
+                    this.updateSimu = false;
+                // Alt click
+                } else if (d3event.altKey) {
+                    this.updateSimu = true;
+                    console.log("alt key pressed");
                 }
-            });
+            }).on("mousedown", (d3event) => {
+                if (d3event.ctrlKey) {
+                    this.createRectangle(d3event);
+                }
+            }).on("mousemove", (mouseMove) => {
+                if (!this.svg.select("rect").empty()) {
+                    this.drawRectangle(mouseMove);
+                    this.selectNode(this.svg.select("rect").node());
+                }
+            }).on("mouseup", () => {
+                this.removeRectangle(this.svg.selectAll("rect"));
+                this.svg.selectAll('circle.ci-node-element.selection').classed("selection", false);
+            })
             // .call(d3.zoom().on("zoom", (event) => {
-            //     this.svg.selectAll("line.link").attr('transform', event.transform);
-            //     this.svg.selectAll("circle.node").attr("transform", event.transform);
+            //     this.svg.selectAll("g").attr('transform', event.transform);
+            //     // this.svg.attr("transform", event.transform);
+            //     this.transform = [event.transform.k, event.transform.x, event.transform.y];
+            //     console.log(event.transform);
+            //     console.log(this.transform);
             // }));
 
         // set the data and properties of link lines
@@ -147,8 +264,11 @@ export default class D3Graph {
             .enter().append("circle")
             .attr("class", "node ci-node-element")
             //Click on node event
-            .on("click", (d3event, node) => {
-                this.differentClick(d3event, node);
+            .on("click", (d3event, object) => {
+                if (!d3event.ctrlKey) {
+                    this.deselectAll();
+                }
+                this.toggleNode(object);
             })
             //Double click on node
             .on("dblclick", () => {
@@ -167,6 +287,19 @@ export default class D3Graph {
                 .on("drag", this.dragged)
                 .on("end", this.dragended));
 
+
+        if (fx && fx.length > 0) {
+            for(const f of fx) {
+                const i = f.i;
+                let cx = f.cx;
+                let cy = f.cy;
+                if (i && this.node._groups[0][i] && cx && cy) {
+                    this.node._groups[0][i].fx = cx;
+                    this.node._groups[0][i].fy = cy;
+                }
+            }
+        }
+
         // visualize the graph
         this.updateDisplay();
     }
@@ -175,10 +308,21 @@ export default class D3Graph {
      * Update Display of the svg
      */
     updateDisplay() {
-        this.node.attr("r", forceProperties.collide.radius);
-        this.node.each(function(datum) {
-            d3.select(this)
-                .attr("fill", colourPalette[datum.grp]);
+        this.node.each(function(node) {
+            let radius = 10;
+            d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
+                if ((node.id == link.source) || (node.id == link.target)) {
+                    radius += 1.5;
+                }
+            });
+            d3.select(this).attr("r", radius);
+
+            if (node.grp) {
+                d3.select(this)
+                    .attr("fill", colourPalette[node.grp]);
+            }
+
+            d3.select(this).attr("id", node.id);
         });
 
         this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
@@ -297,7 +441,7 @@ export default class D3Graph {
      */
     dragged = (event, d) => {
         let selectedNode = this.svg.selectAll("circle.node.ci-node-element.selectedNode");
-        if (selectedNode._groups[0].length > 0) {
+        if (!selectedNode.empty()) {
             let DragSelectedNode = false;
             this.svg.selectAll("circle.node.ci-node-element.selectedNode").each((object) => {
                 if (object == d) {
@@ -320,7 +464,7 @@ export default class D3Graph {
                     }
                 })
             }
-        } else if (selectedNode._groups[0].length == 0) {
+        } else if (selectedNode.empty()) {
             d.fx = event.x;
             d.fy = event.y;
         }
@@ -335,6 +479,14 @@ export default class D3Graph {
         if (!event.active) this.simulation.alphaTarget(0.0001);
         d.fx = null;
         d.fy = null;
+        localStorage.setItem(
+            "fixedNodes",
+            JSON.stringify(
+                this.simulation
+                    .nodes()
+                    .map((d, i) => ({i, cx: d.x, cy: d.y}))
+            )
+        );
     }
 
     /**
@@ -343,94 +495,8 @@ export default class D3Graph {
      * @param {objectClicked} object 
      */
     differentClick = (d3event, object) => {
-        if (!d3event.ctrlKey) {
-            this.isSelectionning = false;
-            this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
-        }
-
-        // Ctrl click
-        if (d3event.ctrlKey) {
-            this.svg.on("mousedown", (d3event) => {
-                this.isSelectionning = true;
-                this.leftUp = [d3event.clientX, d3event.clientY];
-                this.svg.append("rect")
-                    .attr("class", "rectangleSelection")
-                    .attr("x", this.leftUp[0] )
-                    .attr("y", this.leftUp[1] )
-                    .attr("width", 0)
-                    .attr("height", 0)
-                    .attr('stroke', 'black')
-                    .attr('stroke-dasharray', '10px')
-                    .attr('stroke-opacity','1')
-                    .attr('fill','transparent')
-                    .attr("rx", 5)
-                    .attr("ry", 5);
-            }).on("mousemove", (mouseMove) => {
-                if (mouseMove.ctrlKey && this.isSelectionning) {
-                    if (mouseMove.clientX - this.leftUp[0] > 1) {
-                        this.svg.select("rect")
-                            .attr("width", mouseMove.clientX - this.leftUp[0]);
-                    } else {
-                        this.svg.select("rect")
-                            .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
-                            .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) ))
-                    }
-            
-                    if (mouseMove.clientY - this.leftUp[1] > 1) {
-                        this.svg.select("rect")
-                            .attr("height", mouseMove.clientY - this.leftUp[1]);
-                    } else {
-                        this.svg.select("rect")
-                            .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
-                            .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
-                    }
-                    this.svg.selectAll("circle.ci-node-element").each(function (/* data, index */) {
-                        if (d3.select(this.parentNode.parentNode).select("rect")._groups[0][0]) {
-                            let rectangle = d3.select(this.parentNode.parentNode).select("rect")._groups[0][0];
-                            let leftUpAno = [
-                                parseInt(rectangle.getAttribute("x")), 
-                                parseInt(rectangle.getAttribute("y"))
-                            ];
-                            let rightUpAno = [
-                                parseInt(rectangle.getAttribute("x")), 
-                                parseInt(rectangle.getAttribute("y")) + parseInt(rectangle.getAttribute("height"))
-                            ];
-                            let leftBottomAno = [
-                                parseInt(rectangle.getAttribute("x")) + parseInt(rectangle.getAttribute("width")),
-                                parseInt(rectangle.getAttribute("y"))
-                            ];
-                            let rightBottomAno = [
-                                parseInt(rectangle.getAttribute("x")) + parseInt(rectangle.getAttribute("width")), 
-                                parseInt(rectangle.getAttribute("y")) + parseInt(rectangle.getAttribute("height"))
-                            ];
-                            if (
-                                !d3.select(this).classed("selectedNode") &&
-                                leftUpAno[0] < this.getAttribute("cx") &&
-                                leftUpAno[1] < this.getAttribute("cy") &&
-
-                                rightUpAno[0] < this.getAttribute("cx") &&
-                                rightUpAno[1] > this.getAttribute("cy") &&
-
-                                leftBottomAno[0] > this.getAttribute("cx") &&
-                                leftBottomAno[1] < this.getAttribute("cy") &&
-
-                                rightBottomAno[0] > this.getAttribute("cx") &&
-                                rightBottomAno[1] > this.getAttribute("cy")
-                            ) {
-                                d3.select(this)
-                                    .classed( "selection", true)
-                                    .classed( "selectedNode", true);
-                            }
-                        }
-                    })
-                }
-            }).on("mouseup", () => {
-                this.svg.selectAll("rect").remove();
-                this.svg.selectAll('circle.ci-node-element.selection').classed( "selection", false);
-            });
-
         // Shift click
-        } else if (d3event.shiftKey) {
+        if (d3event.shiftKey) {
             console.log("shift key pressed");
             this.updateSimu = false;
         // Alt click
