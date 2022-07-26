@@ -56,7 +56,7 @@ const colourPalette = [
     "#1d9964"
 ];
 
-const fx = JSON.parse(localStorage.getItem("fixedNodes"));
+const localStorageItems = JSON.parse(localStorage.getItem("fixedNodes"));
 
 /**
  * Graph class generator
@@ -102,33 +102,46 @@ export default class D3Graph {
         this.simulation.on("tick", this.ticked);
     }
 
+    /**
+     * toggle node clicked
+     * @param {object} node node clicked
+     */
     toggleNode(node) {
-        let d3Selection = this.svg.select("#"+node.id)
-        d3Selection
-            .classed( "selection", true)
-            .classed( "selectedNode", true);
+        let d3Selection = this.svg.select("#"+node.id);
+        d3Selection.classed("selectedNode", d3Selection.classed("selectedNode") ? false : true);
     }
 
+    /**
+     * Unselect all node
+     */
     deselectAll(){
         this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
     }
 
+    /**
+     * create rectangle for multi-selection
+     * @param {d3event} d3event click event
+     */
     createRectangle(d3event) {
         this.leftUp = [d3event.clientX, d3event.clientY];
-                this.svg.append("rect")
-                    .attr("class", "rectangleSelection")
-                    .attr("x", this.leftUp[0] )
-                    .attr("y", this.leftUp[1] )
-                    .attr("width", 0)
-                    .attr("height", 0)
-                    .attr('stroke', 'white')
-                    .attr('stroke-opacity','1')
-                    .attr('fill','white')
-                    .attr('fill-opacity', '.25')
-                    .attr("rx", 5)
-                    .attr("ry", 5);
+        this.svg.append("rect")
+            .attr("class", "rectangleSelection")
+            .attr("x", this.leftUp[0] )
+            .attr("y", this.leftUp[1] )
+            .attr("width", 0)
+            .attr("height", 0)
+            .attr('stroke', 'white')
+            .attr('stroke-opacity','1')
+            .attr('fill','white')
+            .attr('fill-opacity', '.25')
+            .attr("rx", 5)
+            .attr("ry", 5);
     }
 
+    /**
+     * draw rectangle in relation to the cursor
+     * @param {mouseMove} mouseMove 
+     */
     drawRectangle(mouseMove) {
         if (mouseMove.clientX - this.leftUp[0] > 1) {
             this.svg.select("rect")
@@ -149,6 +162,10 @@ export default class D3Graph {
         }
     }
 
+    /**
+     * Select node in relation to the rectangle
+     * @param {d3rectangle} rect 
+     */
     selectNode(rect) {
         this.svg.selectAll("circle.ci-node-element").each(function (/* data, index */) {
             let leftUpAno = [
@@ -189,6 +206,10 @@ export default class D3Graph {
         });
     }
 
+    /**
+     * 
+     * @param {d3rectangle} rect 
+     */
     removeRectangle(rect) {
         rect.remove();
     }
@@ -287,19 +308,6 @@ export default class D3Graph {
                 .on("drag", this.dragged)
                 .on("end", this.dragended));
 
-
-        if (fx && fx.length > 0) {
-            for(const f of fx) {
-                const i = f.i;
-                let cx = f.cx;
-                let cy = f.cy;
-                if (i && this.node._groups[0][i] && cx && cy) {
-                    this.node._groups[0][i].fx = cx;
-                    this.node._groups[0][i].fy = cy;
-                }
-            }
-        }
-
         // visualize the graph
         this.updateDisplay();
     }
@@ -309,7 +317,7 @@ export default class D3Graph {
      */
     updateDisplay() {
         this.node.each(function(node) {
-            let radius = 10;
+            let radius = forceProperties.collide.radius;
             d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
                 if ((node.id == link.source) || (node.id == link.target)) {
                     radius += 1.5;
@@ -330,11 +338,28 @@ export default class D3Graph {
     }
 
     /**
+     * Restore node position if localStorage exist
+     */
+    restoreNodePosition() {
+        this.svg.selectAll("circle").each((node) => {
+            localStorageItems.forEach(item => {
+                if (item.id == node.id) {
+                    node.x = item.cx;
+                    node.y = item.cy;
+                }
+            });
+        })
+    }
+
+    /**
      * Display svg
      */
     displaySvg() {
         this.initializeDisplay();
         this.initializeSimulation();
+        if (localStorageItems && localStorageItems.length > 0) {
+            this.restoreNodePosition();
+        }
     }
 
     /**
@@ -425,8 +450,8 @@ export default class D3Graph {
 
     /**
      * Start drag a node
-     * @param {event} event 
-     * @param {object} d 
+     * @param {event} event drag event
+     * @param {object} d the node object dragged
      */
     dragstarted = (event, d) => {
         if (!event.active) this.simulation.alphaTarget(0.3).restart();
@@ -436,8 +461,8 @@ export default class D3Graph {
 
     /**
      * Drag a node or all selected node
-     * @param {event} event 
-     * @param {object} d 
+     * @param {event} event drag event
+     * @param {object} d node object dragged
      */
     dragged = (event, d) => {
         let selectedNode = this.svg.selectAll("circle.node.ci-node-element.selectedNode");
@@ -472,43 +497,22 @@ export default class D3Graph {
 
     /**
      * End drag a node
-     * @param {event} event 
-     * @param {object} d 
+     * @param {event} event drag event
+     * @param {object} d node object dragged
      */
-    dragended = (event, d) => {
-        if (!event.active) this.simulation.alphaTarget(0.0001);
-        d.fx = null;
-        d.fy = null;
+    dragended = (event, object) => {
+        if (!event.active) this.simulation.alphaTarget(0);
+        object.fx = null;
+        object.fy = null;
         localStorage.setItem(
             "fixedNodes",
             JSON.stringify(
                 this.simulation
                     .nodes()
-                    .map((d, i) => ({i, cx: d.x, cy: d.y}))
+                    .map((d) => ({id: d.id, cx: d.x, cy: d.y}))
             )
         );
-    }
-
-    /**
-     * Redirect according to the click
-     * @param {click} d3event 
-     * @param {objectClicked} object 
-     */
-    differentClick = (d3event, object) => {
-        // Shift click
-        if (d3event.shiftKey) {
-            console.log("shift key pressed");
-            this.updateSimu = false;
-        // Alt click
-        } else if (d3event.altKey) {
-            this.updateSimu = true;
-            console.log("alt key pressed");
-
-        // Simple click
-        } else {
-            console.log("simple click here : ", d3event.clientX, d3event.clientY);
-            console.log("Element on click => ", object);
-        }
+        console.log(localStorageItems);
     }
 }
 
