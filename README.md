@@ -34,14 +34,17 @@ npm start
 
 To run a local development server that serves the basic demo located in `demo/index.html`  
 
+## Storage
+Node position is stored in localStorage browser
+
 ## Events
 ### Left click
 #### Svg
 Do nothing / unselect selection
 #### Node
-Retreive the node clicked
+Toggle node clicked
 #### Link
-Retreive the link clicked
+Do nothing
 
 ---
 ### Drag
@@ -52,4 +55,4 @@ If multiple node are selected, all node are moving
 ---
 ### Ctrl + click drag
 Select multiple node on the graph.  
-If ctrl is keep down selected node are keep in memory
+If ctrl is keep down selected node are keep in memory  
