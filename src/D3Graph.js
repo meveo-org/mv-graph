@@ -86,134 +86,16 @@ export default class D3Graph {
     }
 
     /**
-     * Dispatch a customEvent
-     * @param {event} event 
+     * Display svg
      */
-    dispatch(event) {
-        console.log("Implement me !", event);
-    }
-
-    /**
-     * Initialize simulation with node, link and force update
-     */
-    initializeSimulation() {
-        this.simulation.nodes(this.graph.nodes);
-        this.initializeForces();
-        this.simulation.on("tick", this.ticked);
-    }
-
-    /**
-     * toggle node clicked
-     * @param {object} node node clicked
-     */
-    toggleNode(node) {
-        let d3Selection = this.svg.select("#"+node.id);
-        d3Selection.classed("selectedNode", d3Selection.classed("selectedNode") ? false : true);
-    }
-
-    /**
-     * Unselect all node
-     */
-    deselectAll(){
-        this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
-    }
-
-    /**
-     * create rectangle for multi-selection
-     * @param {d3event} d3event click event
-     */
-    createRectangle(d3event) {
-        this.leftUp = [d3event.clientX, d3event.clientY];
-        this.svg.append("rect")
-            .attr("class", "rectangleSelection")
-            .attr("x", this.leftUp[0] )
-            .attr("y", this.leftUp[1] )
-            .attr("width", 0)
-            .attr("height", 0)
-            .attr('stroke', 'white')
-            .attr('stroke-opacity','1')
-            .attr('fill','white')
-            .attr('fill-opacity', '.25')
-            .attr("rx", 5)
-            .attr("ry", 5);
-    }
-
-    /**
-     * draw rectangle in relation to the cursor
-     * @param {mouseMove} mouseMove 
-     */
-    drawRectangle(mouseMove) {
-        if (mouseMove.clientX - this.leftUp[0] > 1) {
-            this.svg.select("rect")
-                .attr("width", mouseMove.clientX - this.leftUp[0]);
-        } else {
-            this.svg.select("rect")
-                .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
-                .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) ))
-        }
-
-        if (mouseMove.clientY - this.leftUp[1] > 1) {
-            this.svg.select("rect")
-                .attr("height", mouseMove.clientY - this.leftUp[1]);
-        } else {
-            this.svg.select("rect")
-                .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
-                .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
+    displaySvg() {
+        this.initializeDisplay();
+        this.initializeSimulation();
+        if (localStorageItems && localStorageItems.length > 0) {
+            this.restoreNodePosition();
         }
     }
-
-    /**
-     * Select node in relation to the rectangle
-     * @param {d3rectangle} rect 
-     */
-    selectNode(rect) {
-        this.svg.selectAll("circle.ci-node-element").each(function (/* data, index */) {
-            let leftUpAno = [
-                parseInt(rect.getAttribute("x")), 
-                parseInt(rect.getAttribute("y"))
-            ];
-            let rightUpAno = [
-                parseInt(rect.getAttribute("x")), 
-                parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
-            ];
-            let leftBottomAno = [
-                parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")),
-                parseInt(rect.getAttribute("y"))
-            ];
-            let rightBottomAno = [
-                parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")), 
-                parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
-            ];
-
-            if (
-                !d3.select(this).classed("selectedNode") &&
-                leftUpAno[0] < this.getAttribute("cx") &&
-                leftUpAno[1] < this.getAttribute("cy") &&
-
-                rightUpAno[0] < this.getAttribute("cx") &&
-                rightUpAno[1] > this.getAttribute("cy") &&
-
-                leftBottomAno[0] > this.getAttribute("cx") &&
-                leftBottomAno[1] < this.getAttribute("cy") &&
-
-                rightBottomAno[0] > this.getAttribute("cx") &&
-                rightBottomAno[1] > this.getAttribute("cy")
-            ) {
-                d3.select(this)
-                    .classed( "selection", true)
-                    .classed( "selectedNode", true);
-            }
-        });
-    }
-
-    /**
-     * 
-     * @param {d3rectangle} rect 
-     */
-    removeRectangle(rect) {
-        rect.remove();
-    }
-
+    
     /**
      * Initialize display of the svg
      */
@@ -247,9 +129,8 @@ export default class D3Graph {
             // .call(d3.zoom().on("zoom", (event) => {
             //     this.svg.selectAll("g").attr('transform', event.transform);
             //     // this.svg.attr("transform", event.transform);
-            //     this.transform = [event.transform.k, event.transform.x, event.transform.y];
+            //     this.transform = event.transform;
             //     console.log(event.transform);
-            //     console.log(this.transform);
             // }));
 
         // set the data and properties of link lines
@@ -260,8 +141,8 @@ export default class D3Graph {
             .enter().append("line")
             .attr("class", "link ci-link-element")
             //Click on link event
-            .on("click", (d3event, link) => {
-                this.differentClick(d3event, link);
+            .on("click", () => {
+                //TODO
             })
             //Double click on link
             .on("dblclick", () => {
@@ -287,7 +168,7 @@ export default class D3Graph {
             //Click on node event
             .on("click", (d3event, object) => {
                 if (!d3event.ctrlKey) {
-                    this.deselectAll();
+                    this.deselectAll(object);
                 }
                 this.toggleNode(object);
             })
@@ -313,77 +194,29 @@ export default class D3Graph {
     }
 
     /**
-     * Update Display of the svg
+     * Initialize simulation with node, link and force update
      */
-    updateDisplay() {
-        this.node.each(function(node) {
-            let radius = forceProperties.collide.radius;
-            d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
-                if ((node.id == link.source) || (node.id == link.target)) {
-                    radius += 1.5;
-                }
-            });
-            d3.select(this).attr("r", radius);
-
-            if (node.grp) {
-                d3.select(this)
-                    .attr("fill", colourPalette[node.grp]);
-            }
-
-            d3.select(this).attr("id", node.id);
-        });
-
-        this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
-            .attr("opacity", forceProperties.link.enabled ? 1 : 0);
+    initializeSimulation() {
+        this.simulation.nodes(this.graph.nodes);
+        this.initializeForces();
+        this.simulation.on("tick", this.ticked);
     }
-
+    
     /**
      * Restore node position if localStorage exist
      */
     restoreNodePosition() {
         this.svg.selectAll("circle").each((node) => {
-            localStorageItems.forEach(item => {
+            localStorageItems[0].forEach(item => {
                 if (item.id == node.id) {
                     node.x = item.cx;
                     node.y = item.cy;
                 }
             });
         })
-    }
-
-    /**
-     * Display svg
-     */
-    displaySvg() {
-        this.initializeDisplay();
-        this.initializeSimulation();
-        if (localStorageItems && localStorageItems.length > 0) {
-            this.restoreNodePosition();
+        if (localStorageItems[1] == false) {
+            this.updateSimu = false;
         }
-    }
-
-    /**
-     * Update graph position and force
-     */
-    ticked = () => {
-        if (this.updateSimu && (this.updateSimu == null || this.updateSimu == true)) {
-            this.initializeForces();
-            this.updateSimu = null;
-        } else if (!this.updateSimu && this.updateSimu != null) {
-            this.removeForces();
-        }
-        let widthNb = this.widthR;
-        let heightNb = this.heightR;
-        this.link
-            .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
-            .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
-            .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
-            .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
-
-        this.node
-            .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
-            .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
-        d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha()*100) + '%');
     }
 
     /**
@@ -413,6 +246,47 @@ export default class D3Graph {
             .force("center", null)
             .force("forceX", null)
             .force("forceY", null);
+    }
+
+    /**
+     * Dispatch a customEvent
+     * @param {event} event 
+     */
+    dispatch(event) {
+        console.log("Implement me !", event);
+    }
+
+    /**
+     * Update graph position and force
+     */
+    ticked = () => {
+        if (this.updateSimu && (this.updateSimu == null || this.updateSimu == true)) {
+            this.initializeForces();
+            this.updateSimu = null;
+        } else if (!this.updateSimu && this.updateSimu != null) {
+            this.removeForces();
+        }
+        let widthNb = this.widthR;
+        let heightNb = this.heightR;
+        this.link
+            .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
+            .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
+            .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
+            .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
+
+        this.node
+            .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
+            .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
+        d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha()*100) + '%');
+        localStorage.setItem(
+            "fixedNodes",
+            JSON.stringify(
+                [this.simulation
+                    .nodes()
+                    .map((d) => ({id: d.id, cx: d.x, cy: d.y})),
+                this.updateSimu]
+            )
+        );
     }
 
     /**
@@ -504,16 +378,153 @@ export default class D3Graph {
         if (!event.active) this.simulation.alphaTarget(0);
         object.fx = null;
         object.fy = null;
-        localStorage.setItem(
-            "fixedNodes",
-            JSON.stringify(
-                this.simulation
-                    .nodes()
-                    .map((d) => ({id: d.id, cx: d.x, cy: d.y}))
-            )
-        );
-        console.log(localStorageItems);
     }
+
+        /**
+     * toggle node clicked
+     * @param {object} node node clicked
+     */
+         toggleNode(node) {
+            let d3Selection = this.svg.select("#"+node.id);
+            d3Selection.classed("selectedNode", d3Selection.classed("selectedNode") ? false : true);
+        }
+    
+        /**
+         * Unselect all node
+         * @param {object} nodeClicked don't unselect NodeClicked toggleNode(node) do it
+         */
+        deselectAll(nodeClicked){
+            if (nodeClicked) {
+                this.svg.selectAll("circle.selectedNode").each((node) => {
+                    if (nodeClicked.id != node.id) {
+                        this.svg.select("#"+node.id).classed("selectedNode", false);
+                    }
+                })
+            } else {
+                this.svg.selectAll("circle.selectedNode").classed("selectedNode", false);
+            }
+        }
+    
+        /**
+         * create rectangle for multi-selection
+         * @param {d3event} d3event click event
+         */
+        createRectangle(d3event) {
+            this.leftUp = [d3event.clientX, d3event.clientY];
+            this.svg.append("rect")
+                .attr("class", "rectangleSelection")
+                .attr("x", this.leftUp[0] )
+                .attr("y", this.leftUp[1] )
+                .attr("width", 0)
+                .attr("height", 0)
+                .attr('stroke', 'white')
+                .attr('stroke-opacity','1')
+                .attr('fill','white')
+                .attr('fill-opacity', '.25')
+                .attr("rx", 5)
+                .attr("ry", 5);
+        }
+    
+        /**
+         * draw rectangle in relation to the cursor
+         * @param {mouseMove} mouseMove 
+         */
+        drawRectangle(mouseMove) {
+            if (mouseMove.clientX - this.leftUp[0] > 1) {
+                this.svg.select("rect")
+                    .attr("width", mouseMove.clientX - this.leftUp[0]);
+            } else {
+                this.svg.select("rect")
+                    .attr("width", Math.abs(mouseMove.clientX - this.leftUp[0]))
+                    .attr("x", (this.leftUp[0] - Math.abs(mouseMove.clientX - this.leftUp[0]) ))
+            }
+    
+            if (mouseMove.clientY - this.leftUp[1] > 1) {
+                this.svg.select("rect")
+                    .attr("height", mouseMove.clientY - this.leftUp[1]);
+            } else {
+                this.svg.select("rect")
+                    .attr("height", Math.abs(mouseMove.clientY - this.leftUp[1]))
+                    .attr("y", (this.leftUp[1] - Math.abs(mouseMove.clientY - this.leftUp[1]) ));
+            }
+        }
+    
+        /**
+         * Select node in relation to the rectangle
+         * @param {d3rectangle} rect 
+         */
+        selectNode(rect) {
+            this.svg.selectAll("circle.ci-node-element").each(function () {
+                let leftUpAno = [
+                    parseInt(rect.getAttribute("x")), 
+                    parseInt(rect.getAttribute("y"))
+                ];
+                let rightUpAno = [
+                    parseInt(rect.getAttribute("x")), 
+                    parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+                ];
+                let leftBottomAno = [
+                    parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")),
+                    parseInt(rect.getAttribute("y"))
+                ];
+                let rightBottomAno = [
+                    parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")), 
+                    parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+                ];
+    
+                if (
+                    !d3.select(this).classed("selectedNode") &&
+                    leftUpAno[0] < this.getAttribute("cx") &&
+                    leftUpAno[1] < this.getAttribute("cy") &&
+    
+                    rightUpAno[0] < this.getAttribute("cx") &&
+                    rightUpAno[1] > this.getAttribute("cy") &&
+    
+                    leftBottomAno[0] > this.getAttribute("cx") &&
+                    leftBottomAno[1] < this.getAttribute("cy") &&
+    
+                    rightBottomAno[0] > this.getAttribute("cx") &&
+                    rightBottomAno[1] > this.getAttribute("cy")
+                ) {
+                    d3.select(this)
+                        .classed( "selection", true)
+                        .classed( "selectedNode", true);
+                }
+            });
+        }
+    
+        /**
+         * 
+         * @param {d3rectangle} rect 
+         */
+        removeRectangle(rect) {
+            rect.remove();
+        }
+    
+        /**
+         * Update Display of the svg
+         */
+        updateDisplay() {
+            this.node.each(function(node) {
+                let radius = forceProperties.collide.radius;
+                d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
+                    if ((node.id == link.source) || (node.id == link.target)) {
+                        radius += 1.5;
+                    }
+                });
+                d3.select(this).attr("r", radius);
+    
+                if (node.grp) {
+                    d3.select(this)
+                        .attr("fill", colourPalette[node.grp]);
+                }
+    
+                d3.select(this).attr("id", node.id);
+            });
+    
+            this.link.attr("stroke-width", forceProperties.link.enabled ? 3 : .5)
+                .attr("opacity", forceProperties.link.enabled ? 1 : 0);
+        }
 }
 
 
