@@ -50,7 +50,7 @@ Do nothing
 ### Drag
 #### Node
 Move the node  
-If multiple node are selected, all node are moving
+If multiple node are selected, all nodes are moving
 
 ---
 ### Ctrl + click drag
