@@ -1,7 +1,8 @@
 # [mv-graph](https://meveo-org.github.io/mv-graph/)
-
-This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.  
-[Github page of mv-graph](https://meveo-org.github.io/mv-graph/)
+  
+[Github page of mv-graph](https://meveo-org.github.io/mv-graph/)  
+  
+This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
 ## Installation
 
