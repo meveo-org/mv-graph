@@ -170,7 +170,7 @@ export default class D3Graph {
                 if (!d3event.ctrlKey) {
                     this.deselectAll(object);
                 }
-                this.toggleNode(object);
+                this.toggleNode(object, d3event);
             })
             //Double click on node
             .on("dblclick", () => {
@@ -384,10 +384,14 @@ export default class D3Graph {
      * toggle node clicked
      * @param {object} node node clicked
      */
-         toggleNode(node) {
-            let d3Selection = this.svg.select("#"+node.id);
-            d3Selection.classed("selectedNode", d3Selection.classed("selectedNode") ? false : true);
+    toggleNode(node, eventClick) {
+        let d3Selection = this.svg.select("#"+node.id);
+        d3Selection.classed("selectedNode", d3Selection.classed("selectedNode") ? false : true);
+        if (d3Selection.classed("selectedNode")) {
+            console.log("Selected node : ", d3Selection.attr("cx"), d3Selection.attr("cy"));
+            console.log("Clicked coord : ", eventClick.clientX, eventClick.clientY);
         }
+    }
     
         /**
          * Unselect all node
