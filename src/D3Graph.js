@@ -126,12 +126,12 @@ export default class D3Graph {
                 this.removeRectangle(this.svg.selectAll("rect"));
                 this.svg.selectAll('circle.ci-node-element.selection').classed("selection", false);
             })
-            // .call(d3.zoom().on("zoom", (event) => {
-            //     this.svg.selectAll("g").attr('transform', event.transform);
-            //     // this.svg.attr("transform", event.transform);
-            //     this.transform = event.transform;
-            //     console.log(event.transform);
-            // }));
+            .call(d3.zoom().on("zoom", (event) => {
+                this.svg.selectAll("g").attr('transform', event.transform);
+                // this.svg.attr("transform", event.transform);
+                this.transform = event.transform;
+                console.log(event.transform);
+            }));
 
         // set the data and properties of link lines
         this.link = this.svg.append("g")
