@@ -517,18 +517,26 @@ export default class D3Graph {
                     }
                 });
                 d3.select(this).attr("r", radius);
+
+
     
                 if (node.grp) {
                     d3.select(this)
                         .attr("fill", node.color || colourPalette[node.grp]);
                 }
 
-                if (node.html) {
-                    d3.select(this).html(node.html);
-                }
+                if (node.html || node.text) {
+                    const text = d3.select(this.parentNode)
+                        .append("text")
+                        .attr("dx", -20)
+                        .attr("style", node.labelStyle)
+                        .attr("class", node.labelClass);
 
-                if (node.text) {
-                    d3.select(this).html(node.text);
+                    if (node.html) {
+                        text.html(node.html);
+                    } else {
+                        text.text(node.text);
+                    }
                 }
     
                 d3.select(this).attr("id", node.id);
