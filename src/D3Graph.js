@@ -510,7 +510,7 @@ export default class D3Graph {
          */
         updateDisplay() {
             this.node.each(function(node) {
-                let radius = forceProperties.collide.radius;
+                let radius = node.radius || forceProperties.collide.radius;
                 d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
                     if ((node.id == link.source) || (node.id == link.target)) {
                         radius += 1.5;
@@ -520,7 +520,15 @@ export default class D3Graph {
     
                 if (node.grp) {
                     d3.select(this)
-                        .attr("fill", colourPalette[node.grp]);
+                        .attr("fill", node.color || colourPalette[node.grp]);
+                }
+
+                if (node.html) {
+                    d3.select(this).html(node.html);
+                }
+
+                if (node.text) {
+                    d3.select(this).html(node.text);
                 }
     
                 d3.select(this).attr("id", node.id);
