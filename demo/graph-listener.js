@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import "../src/MvGraph";
+import "../src/MvGraph.js";
 import data from "./miserables.js";
 
 export default class GraphListener extends LitElement {

@@ -12,13 +12,15 @@
       background-color: #494949;
     }
   </style>
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.17/dist/es-module-shims.js"></script>
+  <script type="importmap-shim" src="../project.importmap"></script>
 </head>
 
 <body>
   <div id="demo"></div>
-  <script type="module">
+  <script type="module-shim">
     import { html, render } from 'lit';
-    import '../mv-graph.js';
+    import 'mv-graph';
     import data from "./miserables.js";
     import './graph-listener.js';
 

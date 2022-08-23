@@ -3,6 +3,7 @@
   "description": "Webcomponent mv-graph following open-wc recommendations",
   "license": "MIT",
   "author": "mv-graph",
+  "type":"module",
   "version": "0.0.0",
   "main": "index.js",
   "module": "index.js",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.4.17",
+    "@jsenv/node-module-import-map": "^13.6.1",
     "@web/dev-server": "^0.1.28",
     "eslint": "^8.18.0"
   },
