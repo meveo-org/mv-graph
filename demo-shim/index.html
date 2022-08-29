@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      background: #2b2b2b;
+    }
+
+    div {
+      background-color: #494949;
+    }
+  </style>
+  <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.17/dist/es-module-shims.js"></script>
+   <script type="importmap-shim" src="../node_resolution.importmap"></script>
+</head>
+
+<body>
+  <div id="demo"></div>
+<!--   <script type="module">
+ -->  <script type="module-shim">
+    import { html, render } from 'lit';
+
+    import data from "./miserables.js";
+    // import '../mv-graph.js';
+    import 'mv-graph';
+    import './graph-listener.js';
+
+    function dataUpdated(newData) {
+      console.log(newData);
+    }
+
+    render(
+      html`
+        <graph-listener></graph-listener>
+      `,
+      document.querySelector('#demo')
+    );
+
+  </script>
+</body>
+
+</html>
