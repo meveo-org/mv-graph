@@ -82,6 +82,12 @@ export default class D3Graph {
 
         this.updateSimu = true;
 
+        this.transform = {
+            k: 1,
+            x: 0,
+            y: 0
+        };
+
         this.simulation = d3.forceSimulation();
     }
 
@@ -120,7 +126,7 @@ export default class D3Graph {
             }).on("mousemove", (mouseMove) => {
                 if (!this.svg.select("rect").empty()) {
                     this.drawRectangle(mouseMove);
-                    this.selectNode(this.svg.select("rect").node());
+                    this.selectNode(this.svg.select("rect").node(), this);
                 }
             }).on("mouseup", () => {
                 this.removeRectangle(this.svg.selectAll("rect"));
@@ -457,7 +463,7 @@ export default class D3Graph {
          * Select node in relation to the rectangle
          * @param {d3rectangle} rect 
          */
-        selectNode(rect) {
+        selectNode(rect, that) {
             this.svg.selectAll("circle.ci-node-element").each(function () {
                 let leftUpAno = [
                     parseInt(rect.getAttribute("x")), 
@@ -475,20 +481,19 @@ export default class D3Graph {
                     parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")), 
                     parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
                 ];
-    
                 if (
                     !d3.select(this).classed("selectedNode") &&
-                    leftUpAno[0] < this.getAttribute("cx") &&
-                    leftUpAno[1] < this.getAttribute("cy") &&
+                    leftUpAno[0] < (parseInt(this.getAttribute("cx")) + parseInt(that.transform.x)) &&
+                    leftUpAno[1] < parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
     
-                    rightUpAno[0] < this.getAttribute("cx") &&
-                    rightUpAno[1] > this.getAttribute("cy") &&
+                    rightUpAno[0] < parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
+                    rightUpAno[1] > parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
     
-                    leftBottomAno[0] > this.getAttribute("cx") &&
-                    leftBottomAno[1] < this.getAttribute("cy") &&
+                    leftBottomAno[0] > parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
+                    leftBottomAno[1] < parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
     
-                    rightBottomAno[0] > this.getAttribute("cx") &&
-                    rightBottomAno[1] > this.getAttribute("cy")
+                    rightBottomAno[0] > parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
+                    rightBottomAno[1] > parseInt(this.getAttribute("cy")) + parseInt(that.transform.y)
                 ) {
                     d3.select(this)
                         .classed( "selection", true)
@@ -517,8 +522,6 @@ export default class D3Graph {
                     }
                 });
                 d3.select(this).attr("r", radius);
-
-
     
                 if (node.grp) {
                     d3.select(this)
