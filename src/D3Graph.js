@@ -510,17 +510,33 @@ export default class D3Graph {
          */
         updateDisplay() {
             this.node.each(function(node) {
-                let radius = forceProperties.collide.radius;
+                let radius = node.radius || forceProperties.collide.radius;
                 d3.select(this.parentNode.parentNode).selectAll("line.link.ci-link-element").each((link) => {
                     if ((node.id == link.source) || (node.id == link.target)) {
                         radius += 1.5;
                     }
                 });
                 d3.select(this).attr("r", radius);
+
+
     
                 if (node.grp) {
                     d3.select(this)
-                        .attr("fill", colourPalette[node.grp]);
+                        .attr("fill", node.color || colourPalette[node.grp]);
+                }
+
+                if (node.html || node.text) {
+                    const text = d3.select(this.parentNode)
+                        .append("text")
+                        .attr("dx", -20)
+                        .attr("style", node.labelStyle)
+                        .attr("class", node.labelClass);
+
+                    if (node.html) {
+                        text.html(node.html);
+                    } else {
+                        text.text(node.text);
+                    }
                 }
     
                 d3.select(this).attr("id", node.id);
