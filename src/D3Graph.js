@@ -56,7 +56,8 @@ const colourPalette = [
     "#1d9964"
 ];
 
-const localStorageItems = JSON.parse(localStorage.getItem("fixedNodes"));
+const localStorageItemsNode = JSON.parse(localStorage.getItem("fixedNodes"));
+const localStorageItemsZoom = JSON.parse(localStorage.getItem("zoomed"));
 
 /**
  * Graph class generator
@@ -82,11 +83,11 @@ export default class D3Graph {
 
         this.updateSimu = true;
 
-        this.transform = {
+        this.transform = [{
             k: 1,
             x: 0,
             y: 0
-        };
+        }];
 
         this.simulation = d3.forceSimulation();
     }
@@ -97,8 +98,11 @@ export default class D3Graph {
     displaySvg() {
         this.initializeDisplay();
         this.initializeSimulation();
-        if (localStorageItems && localStorageItems.length > 0) {
+        if (localStorageItemsNode && localStorageItemsNode.length > 0) {
             this.restoreNodePosition();
+        }
+        if (localStorageItemsZoom && localStorageItemsZoom.length > 0) {
+            this.restoreZoom();
         }
     }
     
@@ -134,9 +138,17 @@ export default class D3Graph {
             })
             .call(d3.zoom().on("zoom", (event) => {
                 this.svg.selectAll("g").attr('transform', event.transform);
-                // this.svg.attr("transform", event.transform);
-                this.transform = event.transform;
-                console.log(event.transform);
+                this.transform[0] = event.transform;
+                // console.log(event.transform);
+                localStorage.setItem(
+                    "zoomed",
+                    JSON.stringify(
+                        [
+                            this.transform
+                            .map((d) => ({k: d.k, x: d.x, y:d.y}))
+                        ]
+                    )
+                )
             }));
 
         // set the data and properties of link lines
@@ -213,16 +225,25 @@ export default class D3Graph {
      */
     restoreNodePosition() {
         this.svg.selectAll("circle").each((node) => {
-            localStorageItems[0].forEach(item => {
+            localStorageItemsNode[0].forEach(item => {
                 if (item.id == node.id) {
                     node.x = item.cx;
                     node.y = item.cy;
                 }
             });
         })
-        if (localStorageItems[1] == false) {
+        if (localStorageItemsNode[1] == false) {
             this.updateSimu = false;
         }
+    }
+
+    /**
+     * Restore zoom if localStorage exist
+     */
+    restoreZoom() {
+        this.transform[0] = localStorageItemsZoom[0][0];
+        console.log(this.transform[0]);
+        this.svg.selectAll("g").attr("transform", "translate(" + this.transform[0].x + "," + this.transform[0].y + ") scale(" + this.transform[0].k + ")");
     }
 
     /**
@@ -466,8 +487,8 @@ export default class D3Graph {
         selectNode(rect, that) {
             this.svg.selectAll("circle.ci-node-element").each(function () {
                 let coordTransform = {
-                    x: parseInt(rect.getAttribute("x") / that.transform.k) - parseInt(that.transform.x / that.transform.k),
-                    y: parseInt(rect.getAttribute("y") / that.transform.k) - parseInt(that.transform.y / that.transform.k),
+                    x: parseInt(rect.getAttribute("x") / that.transform[0].k) - parseInt(that.transform[0].x / that.transform[0].k),
+                    y: parseInt(rect.getAttribute("y") / that.transform[0].k) - parseInt(that.transform[0].y / that.transform[0].k),
                 }
                 let leftUpAno = [
                     coordTransform.x, 
