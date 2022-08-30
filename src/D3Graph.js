@@ -465,35 +465,39 @@ export default class D3Graph {
          */
         selectNode(rect, that) {
             this.svg.selectAll("circle.ci-node-element").each(function () {
+                let coordTransform = {
+                    x: parseInt(rect.getAttribute("x") / that.transform.k) - parseInt(that.transform.x / that.transform.k),
+                    y: parseInt(rect.getAttribute("y") / that.transform.k) - parseInt(that.transform.y / that.transform.k),
+                }
                 let leftUpAno = [
-                    parseInt(rect.getAttribute("x")), 
-                    parseInt(rect.getAttribute("y"))
+                    coordTransform.x, 
+                    coordTransform.y
                 ];
                 let rightUpAno = [
-                    parseInt(rect.getAttribute("x")), 
-                    parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+                    coordTransform.x, 
+                    coordTransform.y + parseInt(rect.getAttribute("height"))
                 ];
                 let leftBottomAno = [
-                    parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")),
-                    parseInt(rect.getAttribute("y"))
+                    coordTransform.x + parseInt(rect.getAttribute("width")),
+                    coordTransform.y
                 ];
                 let rightBottomAno = [
-                    parseInt(rect.getAttribute("x")) + parseInt(rect.getAttribute("width")), 
-                    parseInt(rect.getAttribute("y")) + parseInt(rect.getAttribute("height"))
+                    coordTransform.x + parseInt(rect.getAttribute("width")), 
+                    coordTransform.y + parseInt(rect.getAttribute("height"))
                 ];
                 if (
                     !d3.select(this).classed("selectedNode") &&
-                    leftUpAno[0] < (parseInt(this.getAttribute("cx")) + parseInt(that.transform.x)) &&
-                    leftUpAno[1] < parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
+                    leftUpAno[0] < parseInt(this.getAttribute("cx")) &&
+                    leftUpAno[1] < parseInt(this.getAttribute("cy")) &&
     
-                    rightUpAno[0] < parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
-                    rightUpAno[1] > parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
+                    rightUpAno[0] < parseInt(this.getAttribute("cx")) &&
+                    rightUpAno[1] > parseInt(this.getAttribute("cy")) &&
     
-                    leftBottomAno[0] > parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
-                    leftBottomAno[1] < parseInt(this.getAttribute("cy")) + parseInt(that.transform.y) &&
+                    leftBottomAno[0] > parseInt(this.getAttribute("cx")) &&
+                    leftBottomAno[1] < parseInt(this.getAttribute("cy")) &&
     
-                    rightBottomAno[0] > parseInt(this.getAttribute("cx")) + parseInt(that.transform.x) &&
-                    rightBottomAno[1] > parseInt(this.getAttribute("cy")) + parseInt(that.transform.y)
+                    rightBottomAno[0] > parseInt(this.getAttribute("cx")) &&
+                    rightBottomAno[1] > parseInt(this.getAttribute("cy"))
                 ) {
                     d3.select(this)
                         .classed( "selection", true)
