@@ -1,0 +1,436 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "lit": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/index.min.js"
+      ],
+      "lit/async-directive.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/async-directive.min.js"
+      ],
+      "lit/decorators.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators.min.js"
+      ],
+      "lit/decorators/custom-element.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/custom-element.min.js"
+      ],
+      "lit/decorators/event-options.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/event-options.min.js"
+      ],
+      "lit/decorators/property.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/property.min.js"
+      ],
+      "lit/decorators/query-all.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/query-all.min.js"
+      ],
+      "lit/decorators/query-assigned-elements.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/query-assigned-elements.min.js"
+      ],
+      "lit/decorators/query-assigned-nodes.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/query-assigned-nodes.min.js"
+      ],
+      "lit/decorators/query-async.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/query-async.min.js"
+      ],
+      "lit/decorators/query.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/query.min.js"
+      ],
+      "lit/decorators/state.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/decorators/state.min.js"
+      ],
+      "lit/directive-helpers.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directive-helpers.min.js"
+      ],
+      "lit/directive.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directive.min.js"
+      ],
+      "lit/directives/async-append.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/async-append.min.js"
+      ],
+      "lit/directives/async-replace.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/async-replace.min.js"
+      ],
+      "lit/directives/cache.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/cache.min.js"
+      ],
+      "lit/directives/choose.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/choose.min.js"
+      ],
+      "lit/directives/class-map.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/class-map.min.js"
+      ],
+      "lit/directives/guard.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/guard.min.js"
+      ],
+      "lit/directives/if-defined.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/if-defined.min.js"
+      ],
+      "lit/directives/join.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/join.min.js"
+      ],
+      "lit/directives/keyed.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/keyed.min.js"
+      ],
+      "lit/directives/live.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/live.min.js"
+      ],
+      "lit/directives/map.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/map.min.js"
+      ],
+      "lit/directives/range.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/range.min.js"
+      ],
+      "lit/directives/ref.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/ref.min.js"
+      ],
+      "lit/directives/repeat.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/repeat.min.js"
+      ],
+      "lit/directives/style-map.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/style-map.min.js"
+      ],
+      "lit/directives/template-content.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/template-content.min.js"
+      ],
+      "lit/directives/unsafe-html.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/unsafe-html.min.js"
+      ],
+      "lit/directives/unsafe-svg.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/unsafe-svg.min.js"
+      ],
+      "lit/directives/until.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/until.min.js"
+      ],
+      "lit/directives/when.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/directives/when.min.js"
+      ],
+      "lit/experimental-hydrate-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/experimental-hydrate-support.min.js"
+      ],
+      "lit/experimental-hydrate.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/experimental-hydrate.min.js"
+      ],
+      "lit/html.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/html.min.js"
+      ],
+      "lit/polyfill-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/polyfill-support.min.js"
+      ],
+      "lit/static-html.js": [
+        "https://cdn.jsdelivr.net/npm/lit@2.2.6/static-html.min.js"
+      ],
+      "d3": [
+        "https://cdn.jsdelivr.net/npm/d3@7.5.0/src/index.min.js"
+      ],
+      "mv-graph/*": [
+        "./*"
+      ],
+      "mv-graph": [
+        "./mv-graph.js"
+      ],
+      "d3-axis": [
+        "https://cdn.jsdelivr.net/npm/d3-axis@3.0.0/src/index.min.js"
+      ],
+      "d3-color": [
+        "https://cdn.jsdelivr.net/npm/d3-color@3.1.0/src/index.min.js"
+      ],
+      "d3-dispatch": [
+        "https://cdn.jsdelivr.net/npm/d3-dispatch@3.0.1/src/index.min.js"
+      ],
+      "d3-ease": [
+        "https://cdn.jsdelivr.net/npm/d3-ease@3.0.1/src/index.min.js"
+      ],
+      "d3-format": [
+        "https://cdn.jsdelivr.net/npm/d3-format@3.1.0/src/index.min.js"
+      ],
+      "d3-hierarchy": [
+        "https://cdn.jsdelivr.net/npm/d3-hierarchy@3.1.2/src/index.min.js"
+      ],
+      "d3-path": [
+        "https://cdn.jsdelivr.net/npm/d3-path@3.0.1/src/index.min.js"
+      ],
+      "d3-polygon": [
+        "https://cdn.jsdelivr.net/npm/d3-polygon@3.0.1/src/index.min.js"
+      ],
+      "d3-quadtree": [
+        "https://cdn.jsdelivr.net/npm/d3-quadtree@3.0.1/src/index.min.js"
+      ],
+      "d3-random": [
+        "https://cdn.jsdelivr.net/npm/d3-random@3.0.1/src/index.min.js"
+      ],
+      "d3-selection": [
+        "https://cdn.jsdelivr.net/npm/d3-selection@3.0.0/src/index.min.js"
+      ],
+      "d3-timer": [
+        "https://cdn.jsdelivr.net/npm/d3-timer@3.0.1/src/index.min.js"
+      ],
+      "@lit/reactive-element": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/reactive-element.min.js"
+      ],
+      "@lit/reactive-element/css-tag.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/css-tag.min.js"
+      ],
+      "@lit/reactive-element/decorators.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators.min.js"
+      ],
+      "@lit/reactive-element/decorators/base.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/base.min.js"
+      ],
+      "@lit/reactive-element/decorators/custom-element.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/custom-element.min.js"
+      ],
+      "@lit/reactive-element/decorators/event-options.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/event-options.min.js"
+      ],
+      "@lit/reactive-element/decorators/property.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/property.min.js"
+      ],
+      "@lit/reactive-element/decorators/query-all.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/query-all.min.js"
+      ],
+      "@lit/reactive-element/decorators/query-assigned-elements.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/query-assigned-elements.min.js"
+      ],
+      "@lit/reactive-element/decorators/query-assigned-nodes.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/query-assigned-nodes.min.js"
+      ],
+      "@lit/reactive-element/decorators/query-async.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/query-async.min.js"
+      ],
+      "@lit/reactive-element/decorators/query.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/query.min.js"
+      ],
+      "@lit/reactive-element/decorators/state.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/decorators/state.min.js"
+      ],
+      "@lit/reactive-element/polyfill-support.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/polyfill-support.min.js"
+      ],
+      "@lit/reactive-element/reactive-controller.js": [
+        "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1.3.2/reactive-controller.min.js"
+      ],
+      "d3-chord": [
+        "https://cdn.jsdelivr.net/npm/d3-chord@3.0.1/src/index.min.js"
+      ],
+      "d3-drag": [
+        "https://cdn.jsdelivr.net/npm/d3-drag@3.0.0/src/index.min.js"
+      ],
+      "d3-force": [
+        "https://cdn.jsdelivr.net/npm/d3-force@3.0.0/src/index.min.js"
+      ],
+      "d3-interpolate": [
+        "https://cdn.jsdelivr.net/npm/d3-interpolate@3.0.1/src/index.min.js"
+      ],
+      "d3-scale-chromatic": [
+        "https://cdn.jsdelivr.net/npm/d3-scale-chromatic@3.0.0/src/index.min.js"
+      ],
+      "d3-shape": [
+        "https://cdn.jsdelivr.net/npm/d3-shape@3.1.0/src/index.min.js"
+      ],
+      "d3-time": [
+        "https://cdn.jsdelivr.net/npm/d3-time@3.0.0/src/index.min.js"
+      ],
+      "d3-time-format": [
+        "https://cdn.jsdelivr.net/npm/d3-time-format@4.1.0/src/index.min.js"
+      ],
+      "d3-transition": [
+        "https://cdn.jsdelivr.net/npm/d3-transition@3.0.1/src/index.min.js"
+      ],
+      "d3-brush": [
+        "https://cdn.jsdelivr.net/npm/d3-brush@3.0.0/src/index.min.js"
+      ],
+      "d3-zoom": [
+        "https://cdn.jsdelivr.net/npm/d3-zoom@3.0.0/src/index.min.js"
+      ],
+      "internmap": [
+        "https://cdn.jsdelivr.net/npm/internmap@2.0.3/src/index.min.js"
+      ],
+      "d3-array": [
+        "https://cdn.jsdelivr.net/npm/d3-array@3.1.6/src/index.min.js"
+      ],
+      "d3-contour": [
+        "https://cdn.jsdelivr.net/npm/d3-contour@3.1.0/src/index.min.js"
+      ],
+      "d3-geo": [
+        "https://cdn.jsdelivr.net/npm/d3-geo@3.0.1/src/index.min.js"
+      ],
+      "d3-scale": [
+        "https://cdn.jsdelivr.net/npm/d3-scale@4.0.2/src/index.min.js"
+      ],
+      "commander/*": [
+        "https://cdn.jsdelivr.net/npm/commander@7.2.0/*"
+      ],
+      "rw/*": [
+        "https://cdn.jsdelivr.net/npm/rw@1.3.3/*"
+      ],
+      "d3-dsv": [
+        "https://cdn.jsdelivr.net/npm/d3-dsv@3.0.1/src/index.min.js"
+      ],
+      "d3-fetch": [
+        "https://cdn.jsdelivr.net/npm/d3-fetch@3.0.1/src/index.min.js"
+      ],
+      "@types/trusted-types/*": [
+        "https://cdn.jsdelivr.net/npm/@types/trusted-types@2.0.2/*"
+      ],
+      "lit-html": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/lit-html.min.js"
+      ],
+      "lit-html/async-directive.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/async-directive.min.js"
+      ],
+      "lit-html/directive-helpers.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directive-helpers.min.js"
+      ],
+      "lit-html/directive.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directive.min.js"
+      ],
+      "lit-html/directives/async-append.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/async-append.min.js"
+      ],
+      "lit-html/directives/async-replace.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/async-replace.min.js"
+      ],
+      "lit-html/directives/cache.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/cache.min.js"
+      ],
+      "lit-html/directives/choose.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/choose.min.js"
+      ],
+      "lit-html/directives/class-map.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/class-map.min.js"
+      ],
+      "lit-html/directives/guard.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/guard.min.js"
+      ],
+      "lit-html/directives/if-defined.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/if-defined.min.js"
+      ],
+      "lit-html/directives/join.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/join.min.js"
+      ],
+      "lit-html/directives/keyed.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/keyed.min.js"
+      ],
+      "lit-html/directives/live.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/live.min.js"
+      ],
+      "lit-html/directives/map.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/map.min.js"
+      ],
+      "lit-html/directives/range.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/range.min.js"
+      ],
+      "lit-html/directives/ref.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/ref.min.js"
+      ],
+      "lit-html/directives/repeat.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/repeat.min.js"
+      ],
+      "lit-html/directives/style-map.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/style-map.min.js"
+      ],
+      "lit-html/directives/template-content.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/template-content.min.js"
+      ],
+      "lit-html/directives/unsafe-html.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/unsafe-html.min.js"
+      ],
+      "lit-html/directives/unsafe-svg.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/unsafe-svg.min.js"
+      ],
+      "lit-html/directives/until.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/until.min.js"
+      ],
+      "lit-html/directives/when.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/directives/when.min.js"
+      ],
+      "lit-html/experimental-hydrate.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/experimental-hydrate.min.js"
+      ],
+      "lit-html/polyfill-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/polyfill-support.min.js"
+      ],
+      "lit-html/private-ssr-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/private-ssr-support.min.js"
+      ],
+      "lit-html/static.js": [
+        "https://cdn.jsdelivr.net/npm/lit-html@2.2.6/static.min.js"
+      ],
+      "lit-element": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/index.min.js"
+      ],
+      "lit-element/decorators.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators.min.js"
+      ],
+      "lit-element/decorators/custom-element.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/custom-element.min.js"
+      ],
+      "lit-element/decorators/event-options.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/event-options.min.js"
+      ],
+      "lit-element/decorators/property.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/property.min.js"
+      ],
+      "lit-element/decorators/query-all.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/query-all.min.js"
+      ],
+      "lit-element/decorators/query-assigned-elements.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/query-assigned-elements.min.js"
+      ],
+      "lit-element/decorators/query-assigned-nodes.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/query-assigned-nodes.min.js"
+      ],
+      "lit-element/decorators/query-async.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/query-async.min.js"
+      ],
+      "lit-element/decorators/query.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/query.min.js"
+      ],
+      "lit-element/decorators/state.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/decorators/state.min.js"
+      ],
+      "lit-element/experimental-hydrate-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/experimental-hydrate-support.min.js"
+      ],
+      "lit-element/lit-element.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/lit-element.min.js"
+      ],
+      "lit-element/polyfill-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/polyfill-support.min.js"
+      ],
+      "lit-element/private-ssr-support.js": [
+        "https://cdn.jsdelivr.net/npm/lit-element@3.2.0/private-ssr-support.min.js"
+      ],
+      "commander": [
+        "https://cdn.jsdelivr.net/npm/commander@7.2.0/index.min.js"
+      ],
+      "rw": [
+        "https://cdn.jsdelivr.net/npm/rw@1.3.3/index.min.js"
+      ],
+      "robust-predicates": [
+        "https://cdn.jsdelivr.net/npm/robust-predicates@3.0.1/index.min.js"
+      ],
+      "delaunator/*": [
+        "https://cdn.jsdelivr.net/npm/delaunator@5.0.0/*"
+      ],
+      "safer-buffer/*": [
+        "https://cdn.jsdelivr.net/npm/safer-buffer@2.1.2/*"
+      ],
+      "delaunator": [
+        "https://cdn.jsdelivr.net/npm/delaunator@5.0.0/index.min.js"
+      ],
+      "d3-delaunay": [
+        "https://cdn.jsdelivr.net/npm/d3-delaunay@6.0.2/src/index.min.js"
+      ],
+      "safer-buffer": [
+        "https://cdn.jsdelivr.net/npm/safer-buffer@2.1.2/safer.min.js"
+      ],
+      "iconv-lite/*": [
+        "https://cdn.jsdelivr.net/npm/iconv-lite@0.6.3/*"
+      ],
+      "iconv-lite": [
+        "https://cdn.jsdelivr.net/npm/iconv-lite@0.6.3/lib/index.min.js"
+      ]
+    }
+  }
+}

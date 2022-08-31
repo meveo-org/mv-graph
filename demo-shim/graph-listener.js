@@ -1,6 +1,7 @@
 import { LitElement, html } from "lit";
-import "/mv-graph.js";
+import "../src/MvGraph.js";
 import data from "./miserables.js";
+import * as d3 from "d3";
 
 export default class GraphListener extends LitElement {
     constructor() {
