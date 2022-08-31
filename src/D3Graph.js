@@ -136,10 +136,12 @@ export default class D3Graph {
                 this.removeRectangle(this.svg.selectAll("rect"));
                 this.svg.selectAll('circle.ci-node-element.selection').classed("selection", false);
             })
-            .call(d3.zoom().on("zoom", (event) => {
-                this.svg.selectAll("g").attr('transform', event.transform);
-                this.transform[0] = event.transform;
-                // console.log(event.transform);
+            .call(d3.zoom().on("zoom", (event, d) => {
+                console.log(event.sourceEvent.movementX, event.sourceEvent.movementX, d);
+                this.svg.selectAll("g").attr('transform', "translate(" + event.transform.x.toFixed(2) + "," + event.transform.y.toFixed(2) + ") scale(" + event.transform.k.toFixed(2) + ")");
+                this.transform[0].x = event.transform.x.toFixed(2); 
+                this.transform[0].y = event.transform.y.toFixed(2);
+                this.transform[0].k = event.transform.k.toFixed(2);
                 localStorage.setItem(
                     "zoomed",
                     JSON.stringify(
@@ -242,8 +244,8 @@ export default class D3Graph {
      */
     restoreZoom() {
         this.transform[0] = localStorageItemsZoom[0][0];
-        console.log(this.transform[0]);
         this.svg.selectAll("g").attr("transform", "translate(" + this.transform[0].x + "," + this.transform[0].y + ") scale(" + this.transform[0].k + ")");
+        d3.zoomIdentity.translate(this.transform[0].x, this.transform[0].y).scale(this.transform[0].k);
     }
 
     /**
