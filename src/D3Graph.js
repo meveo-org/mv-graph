@@ -499,15 +499,15 @@ export default class D3Graph {
                 ];
                 let rightUpAno = [
                     coordTransform.x, 
-                    coordTransform.y + parseInt(rect.getAttribute("height"))
+                    coordTransform.y + parseInt(rect.getAttribute("height") / that.transform[0].k)
                 ];
                 let leftBottomAno = [
-                    coordTransform.x + parseInt(rect.getAttribute("width")),
+                    coordTransform.x + parseInt(rect.getAttribute("width") / that.transform[0].k),
                     coordTransform.y
                 ];
                 let rightBottomAno = [
-                    coordTransform.x + parseInt(rect.getAttribute("width")), 
-                    coordTransform.y + parseInt(rect.getAttribute("height"))
+                    coordTransform.x + parseInt(rect.getAttribute("width") / that.transform[0].k), 
+                    coordTransform.y + parseInt(rect.getAttribute("height") / that.transform[0].k)
                 ];
                 if (
                     !d3.select(this).classed("selectedNode") &&
