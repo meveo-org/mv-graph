@@ -138,10 +138,10 @@ export default class D3Graph {
             })
             .call(d3.zoom().on("zoom", (event, d) => {
                 console.log(event.sourceEvent.movementX, event.sourceEvent.movementX, d);
-                this.svg.selectAll("g").attr('transform', "translate(" + event.transform.x.toFixed(2) + "," + event.transform.y.toFixed(2) + ") scale(" + event.transform.k.toFixed(2) + ")");
-                this.transform[0].x = event.transform.x.toFixed(2); 
-                this.transform[0].y = event.transform.y.toFixed(2);
-                this.transform[0].k = event.transform.k.toFixed(2);
+                this.svg.selectAll("g").attr('transform', "translate(" + event.transform.x + "," + event.transform.y + ") scale(" + event.transform.k + ")");
+                this.transform[0].x = event.transform.x; 
+                this.transform[0].y = event.transform.y;
+                this.transform[0].k = event.transform.k;
                 localStorage.setItem(
                     "zoomed",
                     JSON.stringify(
