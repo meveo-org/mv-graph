@@ -41,20 +41,33 @@ Node position are stored in localStorage browser
 
 ## Events
 ### Left click
-#### Svg
+#### -Svg-
 Do nothing / unselect selection
-#### Node
+#### -Node-
 Toggle node clicked
-#### Link
+#### -Link-
 Do nothing
 
 ---
 ### Drag
-#### Node
+#### -Node-
 Move the node  
 If multiple node are selected, all nodes are moving
+#### -Svg-
+Move the svg
 
 ---
 ### Ctrl + click drag
+#### -Svg-
 Select multiple node on the graph.  
 If ctrl is keep down selected node are keep in memory  
+
+---
+### Mousewheel
+#### -Svg-
+Zoom and unzoom
+
+---
+### Double Click
+#### -Svg-
+Zoom
