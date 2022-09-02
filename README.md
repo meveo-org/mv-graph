@@ -1,7 +1,9 @@
 # mv-graph
-  
-## [Demo of mv-graph](https://meveo-org.github.io/mv-graph/demo-shim/index.html)  
-  
+
+[Demo of mv-graph](https://meveo-org.github.io/mv-graph/demo-shim/index.html)  
+
+---
+
 This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
 ## Installation
