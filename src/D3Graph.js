@@ -86,6 +86,12 @@ export default class D3Graph {
         }];
 
         this.simulation = d3.forceSimulation();
+
+        this.storage = {
+            "nodesPosition": {},
+            "zoom": {} 
+        };
+        
     }
 
     /**
@@ -94,12 +100,12 @@ export default class D3Graph {
     displaySvg() {
         this.initializeDisplay();
         this.initializeSimulation();
-        if (localStorageItemsNode && localStorageItemsNode.length > 0) {
-            this.restoreNodePosition();
-        }
-        if (localStorageItemsZoom && localStorageItemsZoom.length > 0) {
-            this.restoreZoom();
-        }
+        // if (localStorageItemsNode && localStorageItemsNode.length > 0) {
+        //     this.restoreNodePosition();
+        // }
+        // if (localStorageItemsZoom && localStorageItemsZoom.length > 0) {
+        //     this.restoreZoom();
+        // }
     }
     
     /**
@@ -132,8 +138,8 @@ export default class D3Graph {
                 this.removeRectangle(this.svg.selectAll("rect"));
                 this.svg.selectAll('circle.ci-node-element.selection').classed("selection", false);
             })
-            .call(d3.zoom().on("zoom", (event, d) => {
-                console.log(event.sourceEvent.movementX, event.sourceEvent.movementX, d);
+            .call(d3.zoom().on("zoom", (event) => {
+                // console.log(event.sourceEvent.movementX, event.sourceEvent.movementX);
                 this.svg.selectAll("g").attr('transform', "translate(" + event.transform.x + "," + event.transform.y + ") scale(" + event.transform.k + ")");
                 this.transform[0].x = event.transform.x; 
                 this.transform[0].y = event.transform.y;
@@ -147,6 +153,16 @@ export default class D3Graph {
                         ]
                     )
                 )
+                this.storage.zoom = {
+                    k: event.transform.k,
+                    x: event.transform.x,
+                    y: event.transform.y
+                }
+                const svgInfoEvent = new CustomEvent("svg-info", {
+                    detail: this.storage,
+                    bubble: true
+                });
+                this.dispatch(svgInfoEvent);
             }));
 
         // set the data and properties of link lines
@@ -200,6 +216,9 @@ export default class D3Graph {
             //Mouseover on node event
             .on("mouseover", () => {
                 //TODO
+            })
+            .on("mouseout", () => {
+                //TODO
             }).call(d3.drag()
                 .on("start", this.dragstarted)
                 .on("drag", this.dragged)
@@ -240,7 +259,6 @@ export default class D3Graph {
      */
     restoreZoom() {
         this.transform[0] = localStorageItemsZoom[0][0];
-        console.log(this.transform[0]);
         this.svg.selectAll("g").attr("transform", "translate(" + this.transform[0].x + "," + this.transform[0].y + ") scale(" + this.transform[0].k + ")");
         d3.zoomIdentity.translate(this.transform[0].x, this.transform[0].y).scale(this.transform[0].k);
     }
@@ -312,6 +330,11 @@ export default class D3Graph {
                 this.updateSimu]
             )
         );
+        this.storage.nodesPosition = {
+            node: [
+                this.simulation.nodes().map((d) => ({id: d.id, cx: d.x, cy: d.y}))
+            ]
+        }
     }
 
     /**

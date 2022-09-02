@@ -11,10 +11,19 @@ export default class GraphListener extends LitElement {
         console.log(newData);
     }
 
+    svgInfo(e) {
+        //TODO local storage or serveur storage
+        localStorage.setItem(
+            "reloadInfo", e.detail
+        )
+    }
+
     render() {
         return html`
-            <mv-graph .data=${data} 
-            ></mv-graph>
+            <mv-graph 
+                .data=${data}
+            >
+            </mv-graph>
         `;
     }
 }

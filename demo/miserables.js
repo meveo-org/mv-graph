@@ -1,50 +1,62 @@
+/*
+  DATA MODEL NOW
+  {
+    id : str,
+
+    node: {
+      id: str
+      name: str
+      grp: int <= (for node color)
+    },
+    
+    link : {
+      source: node id,
+      target: node id,
+      value: int
+    }
+  }
+*/
+
 const data = {
+  "id": "orga",
   "nodes": [
     {
       "name": "S Michea",
-      "n": 1,
       "grp": 1,
       "id": "SMichea"
     },
     {
       "name": "S Perrineau",
-      "n": 2,
       "grp": 1,
       "id": "SPerrineau"
     },
     {
       "name": "A Grenier",
-      "n": 3,
       "grp": 3,
       "id": "AGrenier"
     },
     {
       "name": "C Bareth",
-      "n": 4,
       "grp": 1,
       "id": "CBareth"
     },
     {
       "name": "A Seurre",
-      "n": 5,
       "grp": 2,
       "id": "ASeurre"
     },
     {
       "name": "L Haas",
-      "n": 6,
       "grp": 1,
       "id": "LHaas"
     },
     {
       "name": "Q Tixier",
-      "n": 7,
       "grp": 3,
       "id": "QTixier"
     },
     {
       "name": "P Stobart",
-      "n": 8,
       "grp": 2,
       "id": "PStobart"
     }
@@ -85,8 +97,7 @@ const data = {
       "target": "SMichea",
       "value": 1
     }
-  ],
-  "attributes": {}
+  ]
 }
 
 
