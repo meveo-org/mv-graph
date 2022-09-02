@@ -16,12 +16,14 @@ export default class GraphListener extends LitElement {
         localStorage.setItem(
             "reloadInfo", e.detail
         )
+        console.log(e.detail);
     }
 
     render() {
         return html`
             <mv-graph 
                 .data=${data}
+                @svg-info=${this.svgInfo}
             >
             </mv-graph>
         `;
