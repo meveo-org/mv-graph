@@ -44,7 +44,7 @@ export class MvGraph extends LitElement {
 
   firstUpdated() {
     const svg = this.shadowRoot.querySelector("svg");
-    this.graph = new D3Graph(svg, this.data, 1500, 900);
+    this.graph = new D3Graph(svg, this.data);
     this.graph.dispatch = (e) => this.dispatchEvent(e);
     this.graph.displaySvg();
   }

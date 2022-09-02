@@ -64,7 +64,7 @@ const localStorageItemsZoom = JSON.parse(localStorage.getItem("zoomed"));
  */
 export default class D3Graph {
 
-    constructor(svg, data, width, height) {
+    constructor(svg, data) {
         this.data = data;
 
         this.svg = d3.select(svg);
@@ -76,10 +76,6 @@ export default class D3Graph {
         this.node = null;
         // the data - an object with nodes and links
         this.graph = data;
-
-        //graph dimension
-        this.widthR = width;
-        this.heightR = height;
 
         this.updateSimu = true;
 
@@ -296,17 +292,16 @@ export default class D3Graph {
         } else if (!this.updateSimu && this.updateSimu != null) {
             this.removeForces();
         }
-        let widthNb = this.widthR;
-        let heightNb = this.heightR;
+
         this.link
-            .attr("x1", function (d) { return d.source.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.source.x)); })
-            .attr("y1", function (d) { return d.source.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.source.y)); })
-            .attr("x2", function (d) { return d.target.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.target.x)); })
-            .attr("y2", function (d) { return d.target.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.target.y)); });
+            .attr("x1", function (d) { return d.source.x })
+            .attr("y1", function (d) { return d.source.y })
+            .attr("x2", function (d) { return d.target.x })
+            .attr("y2", function (d) { return d.target.y });
 
         this.node
-            .attr("cx", function (d) { return d.x = Math.max(forceProperties.collide.radius, Math.min(widthNb - forceProperties.collide.radius, d.x)); })
-            .attr("cy", function(d) { return d.y = Math.max(forceProperties.collide.radius, Math.min(heightNb - forceProperties.collide.radius, d.y)); });
+            .attr("cx", function (d) { return d.x })
+            .attr("cy", function(d) { return d.y });
         d3.select('#alpha_value').style('flex-basis', (this.simulation.alpha()*100) + '%');
         localStorage.setItem(
             "fixedNodes",
@@ -337,10 +332,10 @@ export default class D3Graph {
             .iterations(forceProperties.collide.iterations);
         this.simulation.force("forceX")
             .strength(forceProperties.forceX.strength * forceProperties.forceX.enabled)
-            .x(this.width * forceProperties.forceX.x);
+            .x(forceProperties.forceX.x);
         this.simulation.force("forceY")
             .strength(forceProperties.forceY.strength * forceProperties.forceY.enabled)
-            .y(this.height * forceProperties.forceY.y);
+            .y(forceProperties.forceY.y);
         this.simulation.force("link")
             .id(function (d) { return d.id; })
             .distance(forceProperties.link.distance)
