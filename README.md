@@ -39,7 +39,7 @@ npm start
 To run a local development server that serves the basic demo located in `demo/index.html`  
 
 ## Storage
-Node position are stored in localStorage browser
+Node position are stored in localStorage browser. The storage is manage by the parent component to save on the server or just locally
 
 ## Events
 ### Left click
