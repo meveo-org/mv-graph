@@ -1,7 +1,9 @@
-# [mv-graph](https://meveo-org.github.io/mv-graph/)
-  
-[Github page of mv-graph](https://meveo-org.github.io/mv-graph/)  
-  
+# mv-graph
+
+[Demo of mv-graph](https://meveo-org.github.io/mv-graph/demo-shim/index.html)  
+
+---
+
 This webcomponent follows the [open-wc](https://github.com/open-wc/open-wc) recommendation.
 
 ## Installation
@@ -37,7 +39,7 @@ npm start
 To run a local development server that serves the basic demo located in `demo/index.html`  
 
 ## Storage
-Node position are stored in localStorage browser
+Node position are stored in localStorage browser. The storage is manage by the parent component to save on the server or just locally
 
 ## Events
 ### Left click
