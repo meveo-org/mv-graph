@@ -64,10 +64,13 @@ const localStorageItemsZoom = JSON.parse(localStorage.getItem("zoomed"));
  */
 export default class D3Graph {
 
-    constructor(svg, data) {
+    constructor(svg, data, serverStorage, storageGraph) {
         this.svg = d3.select(svg);
         this.width = +this.svg.node().getBoundingClientRect().width;
         this.height = +this.svg.node().getBoundingClientRect().height;
+
+        this.serverStorage = serverStorage;
+        this.storageGraph = storageGraph;
 
         // svg objects
         this.link = null;
@@ -99,6 +102,7 @@ export default class D3Graph {
     displaySvg() {
         this.initializeDisplay();
         this.initializeSimulation();
+        this.restoreGraph(this.storageServer, this.storageGraph);
         // if (localStorageItemsNode && localStorageItemsNode.length > 0) {
         //     this.restoreNodePosition();
         // }
@@ -235,6 +239,13 @@ export default class D3Graph {
         this.simulation.nodes(this.graph.nodes);
         this.initializeForces();
         this.simulation.on("tick", this.ticked);
+    }
+
+    /**
+     * 
+     */
+    restoreGraph(storageServer, storageGraph) {
+        console.log(storageServer, storageGraph);
     }
     
     /**
